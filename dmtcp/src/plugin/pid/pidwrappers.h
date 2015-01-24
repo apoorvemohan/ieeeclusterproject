@@ -61,6 +61,11 @@ struct user_desc {int dummy;}; /* <asm/ldt.h> is missing in Ubuntu 14.04 */
 #include <netdb.h>
 #include <mqueue.h>
 
+//PERF tool
+#include <linux/perf_event.h>
+#include <linux/hw_breakpoint.h>
+
+
 #include "dmtcp.h"
 
 // Keep in sync with dmtcp/src/constants.h
@@ -87,6 +92,8 @@ extern "C"
   pid_t gettid();
   int tkill(int tid, int sig);
   int tgkill(int tgid, int tid, int sig);
+  int perf_event_open(struct perf_event_attr *attr, pid_t pid,
+                      int cpu, int group_fd, unsigned long flags);
 
 #define FOREACH_PIDVIRT_WRAPPER(MACRO)\
   MACRO(fork)               \
@@ -117,6 +124,7 @@ extern "C"
   MACRO(waitid)             \
   MACRO(wait3)              \
   MACRO(wait4)              \
+/*  MACRO(perf_event_open)    \*/\
   MACRO(ioctl)              \
   MACRO(setgid)             \
   MACRO(setuid)             \
@@ -199,6 +207,9 @@ extern "C"
   pid_t _real_wait3(__WAIT_STATUS status, int options, struct rusage *rusage);
   pid_t _real_wait4(pid_t pid, __WAIT_STATUS status, int options,
                     struct rusage *rusage);
+//  int _real_perf_event_open(struct perf_event_attr *attr, pid_t pid,
+//                               int cpu, int group_fd, unsigned long flags);
+
   LIB_PRIVATE extern int send_sigwinch;
   int _real_ioctl(int d,  unsigned long int request, ...) __THROW;
 

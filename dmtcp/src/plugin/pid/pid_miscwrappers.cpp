@@ -31,6 +31,15 @@
 #endif
 #include <linux/version.h>
 
+//for syscall to call perf_event_open
+//#define _GNU_SOURCE         
+#include <unistd.h>
+#include <sys/syscall.h> 
+
+//Perf Tool
+#include <linux/perf_event.h>
+#include <linux/hw_breakpoint.h>
+
 #include "jassert.h"
 #include "jfilesystem.h"
 #include "jconvert.h"
@@ -402,6 +411,14 @@ extern "C" SYSCALL_ARG_RET_TYPE syscall(SYSCALL_ARG_RET_TYPE sys_num, ...)
       SYSCALL_GET_ARGS_2(pid_t,pid,int,sig);
       ret = kill(pid, sig);
       break;
+    }
+
+    case SYS_perf_event_open:
+    {
+      SYSCALL_GET_ARGS_5(struct perf_event_attr*,attr,pid_t,pid,int,cpu,int,
+                         group_fd,unsigned long,flags);
+      ret =  perf_event_open(attr, pid, cpu, group_fd, flags);
+      break;	
     }
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,9))

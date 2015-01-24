@@ -209,6 +209,12 @@ pid_t _real_wait4(pid_t pid, __WAIT_STATUS status, int options, struct rusage *r
   REAL_FUNC_PASSTHROUGH_TYPED ( pid_t, wait4 ) ( pid, status, options, rusage );
 }
 
+//LIB_PRIVATE
+//int _real_perf_event_open(struct perf_event_attr *attr, pid_t pid,
+//                               int cpu, int group_fd, unsigned long flags) {
+//  REAL_FUNC_PASSTHROUGH_TYPED ( int, perf_event_open ) ( attr, pid, cpu, group_fd, flags );
+//}
+
 LIB_PRIVATE
 int _real_ioctl(int d, unsigned long int request, ...) {
   void * arg;

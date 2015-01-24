@@ -28,6 +28,10 @@
 #include <sys/syscall.h>
 #include <sys/procfs.h>
 
+//PERF tool
+#include <linux/perf_event.h>
+#include <linux/hw_breakpoint.h>
+
 #include "jassert.h"
 #include "jconvert.h"
 #include "pidwrappers.h"
@@ -503,6 +507,14 @@ pid_t wait4(pid_t pid, __WAIT_STATUS status, int options, struct rusage *rusage)
   }
   errno = saved_errno;
   return virtualPid;
+}
+
+extern "C" int perf_event_open(struct perf_event_attr *attr, pid_t pid,
+                               int cpu, int group_fd, unsigned long flags)
+{
+  pid_t currPid = VIRTUAL_TO_REAL_PID (pid);
+  return (int)_real_syscall(__NR_perf_event_open, attr, currPid, cpu, group_fd,
+                      flags);
 }
 
 extern "C" long ptrace (enum __ptrace_request request, ...)
