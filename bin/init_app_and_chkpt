@@ -2,7 +2,7 @@
 
 import time
 import sys
-sys.path.insert(0, '../common/imports/')
+sys.path.insert(0, '/home/apoorve/project/common/imports')
 
 import dmtcp_utils
 import utils
@@ -10,42 +10,42 @@ import constants
 
 
 def create_chkpt_dir():
-	if not isdir(CHKPTDIR):
-		mkdir(CHKPTDIR)
+	if not utils.isdir(constants.CHKPTDIR):
+		utils.mkdir(constants.CHKPTDIR)
 
 def get_dir_name_for_app_by_id(app_id):
-	cmd = getappexeccommandbyid(app_id)
+	cmd = utils.getappexeccommandbyid(app_id)
 	if cmd.find('|') != -1:
 		cmd = cmd.split('|')[1] + ' ' + cmd.split('|')[0].replace('echo','')
 
-	return cmd.split(' ', 1)[0].split('/')[-1] + '_' + cmd.split(' ', 1)[1].strip().replace("'","").replace('-','').replace(' ','_')  + '_' + gettimestamp().replace(' ','_')
+	return constants.CHKPTDIR + '/' + cmd.split(' ', 1)[0].split('/')[-1] + '_' + cmd.split(' ', 1)[1].strip().replace("'","").replace('-','').replace(' ','_')  + '_' + utils.gettimestamp().replace(' ','_')
 
 
 def setup_for_restart(app_id):
 	app_chkpt_dir = get_dir_name_for_app_by_id(app_id)
-	mkdir(app_chkpt_dir)
+	utils.mkdir(app_chkpt_dir)
 	fp = open(app_chkpt_dir + '/dmtcp_env.txt', "w")
 	fp.write("PROCESS_NAME=$PROCESS_NAME\n")
         fp.close()
-	return app_chpt_dir_name
+	return app_chkpt_dir
 
 def main():
 	
 	create_chkpt_dir()
-	app_id_list = getappidlist()
+	app_id_list = utils.getappidlist()
 	
 	for app_id in app_id_list:
 		port = None
-		cwd = getcwd()
-		chpt_dir = setup_for_restart(app_id)
-		chdir(chkpt_dir)
-		port = getopenport()
-		dmtcplaunch(app_id, '--with-plugin myplug', '--newcoordinator', '--port ' + str(port), '--modify-env', '--daemon')
-		time.sleep(SHORTDELAY)
-		dmtcpchkpt('--port ' + str(port), '-b')
-		dmtcpkill('--port ' + str(port))
-		chdir(cwd)
+		cwd = utils.getcwd()
+		chkpt_dir = setup_for_restart(app_id)
+		utils.chdir(chkpt_dir)
+		port = utils.getopenport()
+#		dmtcp_utils.launch(app_id, '--with-plugin myplug', '--newcoordinator', '--port ' + str(port), '--modify-env', '--daemon')
+		time.sleep(constants.SHORTDELAY)
+#		dmtcp_utils.chkpt('--port ' + str(port), '-b')
+#		dmtcp_utils.kill('--port ' + str(port))
+		utils.chdir(cwd)
 
-if __name__ == '__main__'
-	LOGGER = 'init_app_and_chkpt'
+if __name__ == '__main__':
+	constants.LOGGER = 'init_app_and_chkpt'
 	main()

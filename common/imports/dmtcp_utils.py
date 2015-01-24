@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 
 
-def dmtcplaunch(app_id, plugin, newcoordinator, port, modifyenv, daemon):
+def launch(app_id, plugin, newcoordinator, port, modifyenv, daemon):
 	import constants
 	import utils
 
-	cmd = DMTCP_LAUNCH 
+	cmd = constants.DMTCP_LAUNCH 
 
 	if (plugin != None) and ('--with-plugin' in plugin):
 		cmd += (' ' + plugin)
-			if 'myplug' in cmd:
-				cmd.replace('myplug', MYPLUG) 
+		if 'myplug' in cmd:
+			cmd.replace('myplug', constants.MYPLUG) 
 
 	if (newcoordinator != None) and ('--new-coordinator' == newcoordinator):
 		cmd += (' ' + newcoordinator)
@@ -21,17 +21,19 @@ def dmtcplaunch(app_id, plugin, newcoordinator, port, modifyenv, daemon):
 	if (modifyenv != None) and ('--modify-env' == modifyenv):
 		cmd += (' ' + modifyenv)
 
-	cmd += (' ' + getappexeccommandbyid(app_id))
+	cmd += (' ' + utils.getappexeccommandbyid(app_id))
 
 	if (background != None) and ('--daemon' == daemon):
-		cmd += ' &'
+		utils.execcmdbg(cmd)
+	else:
+		utils.execcmd(cmd)
+		
 	
-	execcmd(cmd)
-	
-def dmtcpchkpt(port, blocked):
+def chkpt(port, blocked):
 	import constants
+	import utils
 
-	cmd = DMTCP_COMMAND
+	cmd = constants.DMTCP_COMMAND
 
 	if (blocked != None) and (blocked == '-b'):
 		cmd += ' -bc'
@@ -41,15 +43,16 @@ def dmtcpchkpt(port, blocked):
 	if (port != None) and ('--port' in port):
 		cmd += (' ' + port)
 
-	execcmd(cmd)
+	utils.execcmd(cmd)
 
-def dmtcpkill(port):
+def kill(port):
 	import constants
+	import utils
 
-	cmd = DMTCP_COMMAND
+	cmd = constants.DMTCP_COMMAND
 
 	if (port != None) and ('--port' in port):
 		cmd += (' ' + port)
 
-	execcmd(cmd)
+	utils.execcmd(cmd)
 	

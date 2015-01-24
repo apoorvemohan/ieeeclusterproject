@@ -9,10 +9,10 @@ def execcmdbg(command):
 	os.system(command + ' &')
 
 def mkdir(dirname):	
-	execcmd(dirname)
+	execcmd('mkdir ' + dirname)
 
 def chdir(dirname):
-	execcmd(dirname)
+	execcmd('cd ' + dirname)
 
 def isfile(filename):
 	import os
@@ -41,15 +41,19 @@ def getopenport():
 
 def getappidlist():
 	import xml.etree.ElementTree as ET
+
 	import constants
-	tree = ET.parse(DATAFILE)
+
+	tree = ET.parse(constants.DATAFILE)
 	root = tree.getroot()
 	return [attr.attrib.get('ID') for attr in root.iter('APPLICATIONDATA')]
 
 def getappexeccommandbyid(app_id):
 	import xml.etree.ElementTree as ET
+
         import constants
-        tree = ET.parse(DATAFILE)
+
+        tree = ET.parse(constants.DATAFILE)
         root = tree.getroot()
 	app_name = None
 	app_data = None
@@ -67,7 +71,7 @@ def getappexeccommandbyid(app_id):
 			app_cmd = node.text
 			break
 
-	app_cmd = app_cmd.replace(app_name+'_PATH', APP_PATH_MAP[app_name])
+	app_cmd = app_cmd.replace(app_name+'_PATH', constants.APP_PATH_MAP[app_name])
 
 	for node in app_data.getchildren():
 		app_cmd = app_cmd.replace(node.tag, node.text)
