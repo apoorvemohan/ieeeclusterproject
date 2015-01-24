@@ -10,7 +10,7 @@ def launch(app_id, plugin, newcoordinator, port, modifyenv, daemon):
 	if (plugin != None) and ('--with-plugin' in plugin):
 		cmd += (' ' + plugin)
 		if 'myplug' in cmd:
-			cmd.replace('myplug', constants.MYPLUG) 
+			cmd = cmd.replace('myplug', constants.MYPLUG) 
 
 	if (newcoordinator != None) and ('--new-coordinator' == newcoordinator):
 		cmd += (' ' + newcoordinator)
@@ -23,7 +23,9 @@ def launch(app_id, plugin, newcoordinator, port, modifyenv, daemon):
 
 	cmd += (' ' + utils.getappexeccommandbyid(app_id))
 
-	if (background != None) and ('--daemon' == daemon):
+	cmd += (' >> ' + constants.LOGDIR + '/' + constants.LOGGER + ' 2>&1 ')
+
+	if (daemon != None) and ('--daemon' == daemon):
 		utils.execcmdbg(cmd)
 	else:
 		utils.execcmd(cmd)
@@ -42,6 +44,8 @@ def chkpt(port, blocked):
 
 	if (port != None) and ('--port' in port):
 		cmd += (' ' + port)
+	
+	cmd += (' >> ' + constants.LOGDIR + '/' + constants.LOGGER + ' 2>&1 ')
 
 	utils.execcmd(cmd)
 
@@ -51,8 +55,12 @@ def kill(port):
 
 	cmd = constants.DMTCP_COMMAND
 
+	cmd += ' -k'
+
 	if (port != None) and ('--port' in port):
 		cmd += (' ' + port)
+
+	cmd += (' >> ' + constants.LOGDIR + '/' + constants.LOGGER + ' 2>&1 ')
 
 	utils.execcmd(cmd)
 	

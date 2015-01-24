@@ -40,12 +40,12 @@ def main():
 		chkpt_dir = setup_for_restart(app_id)
 		utils.chdir(chkpt_dir)
 		port = utils.getopenport()
-#		dmtcp_utils.launch(app_id, '--with-plugin myplug', '--newcoordinator', '--port ' + str(port), '--modify-env', '--daemon')
+		dmtcp_utils.launch(app_id, '--with-plugin myplug', '--newcoordinator', '--port ' + str(port), '--modify-env', '--daemon')
 		time.sleep(constants.SHORTDELAY)
-#		dmtcp_utils.chkpt('--port ' + str(port), '-b')
-#		dmtcp_utils.kill('--port ' + str(port))
+		dmtcp_utils.chkpt('--port ' + str(port), '-b')
+		dmtcp_utils.kill('--port ' + str(port))
 		utils.chdir(cwd)
 
 if __name__ == '__main__':
-	constants.LOGGER = 'init_app_and_chkpt'
+	constants.LOGGER = 'init_app_and_chkpt.log'
 	main()

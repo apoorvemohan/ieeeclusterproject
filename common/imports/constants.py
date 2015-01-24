@@ -4,17 +4,17 @@
 BASE = '/home/apoorve/project'
 DMTCP = BASE + '/dmtcp'
 SPLASH = BASE + '/splash2_bench'
-SPLASH_KERNEL = SPLASH + '/codes/kernel'
+SPLASH_KERNEL = SPLASH + '/codes/kernels'
 SPLASH_APPS = SPLASH = '/codes/apps'
 PROBE = BASE + '/stencilprobe_bench'
-LOG = BASE + '/log'
 STRACE = BASE + '/strace'
 
+LOGDIR = BASE + '/log'
 DATADIR = BASE + '/common/data'
 CHKPTDIR = DATADIR + '/init_chkpts'
 
 DATAFILE = DATADIR + '/appdata.xml'
-MYPLUG = BASE + '/src/plugin/myplug/dmtcp_myplughijack.so'
+MYPLUG = DMTCP + '/src/plugin/myplug/dmtcp_myplughijack.so'
 
 #DMTCP COMMANDS
 DMTCP_COORDINATOR = DMTCP + '/bin/dmtcp_coordinator'

@@ -8,11 +8,13 @@ def execcmdbg(command):
 	import os
 	os.system(command + ' &')
 
-def mkdir(dirname):	
-	execcmd('mkdir ' + dirname)
+def mkdir(dirname):
+	import os	
+	os.mkdir(dirname)
 
 def chdir(dirname):
-	execcmd('cd ' + dirname)
+	import os
+	os.chdir(dirname)
 
 def isfile(filename):
 	import os
