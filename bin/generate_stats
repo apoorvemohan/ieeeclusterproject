@@ -1,1 +1,22 @@
 #!/usr/bin/env python
+
+import sys
+import os
+sys.path.insert(0, '/home/apoorve/project/common/imports')
+
+import constants
+import utils
+import dmtcp_utils
+
+def main():
+
+	if utils.isdir(constants.CHKPTDIR):
+		utils.mkdir(STATSDIR)
+		for ele in os.listdir(constants.CHKPTDIR):
+			if os.isdir(ele):
+				os.environ['PROCESS_NAME'] = (STATSDIR + '/' + ele + '.stat')
+				dmtcp_utils.restart()
+
+if __name__ == '__main__':
+	LOGGER = 'generatestats.log'
+	main()

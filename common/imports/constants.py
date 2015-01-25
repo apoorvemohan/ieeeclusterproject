@@ -12,8 +12,10 @@ STRACE = BASE + '/strace'
 LOGDIR = BASE + '/log'
 DATADIR = BASE + '/common/data'
 CHKPTDIR = DATADIR + '/init_chkpts'
+STATSDIR = DATADIR + '/stats'
 
 DATAFILE = DATADIR + '/appdata.xml'
+PERMUTATIONFILE = DATADIR + '/permutations.xml'
 MYPLUG = DMTCP + '/src/plugin/myplug/dmtcp_myplughijack.so'
 
 #DMTCP COMMANDS

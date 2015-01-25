@@ -22,7 +22,7 @@ def isfile(filename):
 
 def isdir(dirname):
 	import os
-	os.path.exists(dirname)
+	os.path.isdir(dirname)
 
 def gettimestamp():
 	import datetime
