@@ -2,6 +2,7 @@
 
 import sys
 import os
+import xml.etree.ElementTree as ET
 sys.path.insert(0, '/home/apoorve/project/common/imports')
 
 import constants
@@ -10,13 +11,22 @@ import dmtcp_utils
 
 def main():
 
-	if utils.isdir(constants.CHKPTDIR):
-		utils.mkdir(STATSDIR)
-		for ele in os.listdir(constants.CHKPTDIR):
-			if os.isdir(ele):
-				os.environ['PROCESS_NAME'] = (STATSDIR + '/' + ele + '.stat')
-				dmtcp_utils.restart()
+	if os.path.isdir(constants.CHKPTDIR) and os.path.isfile(constants.PERMUTATIONFILE):
+		utils.mkdir(constants.STATSDIR)
+		tree = ET.parse(constants.PERMUTATIONFILE)
+		root = tree.getroot()
+
+		for run in root.findall('RUN'):
+			run_stats_dir_name = ''
+			for app in run.getchildren():
+				run_stats_dir_name += (app.text.split('/')[len(app.text.split('/')) - 2] + '_')
+
+			os.mkdir(constants.STATSDIR + '/' + run_stats_dir_name[0:len(run_stats_dir_name)-1])
+			for app in run.getchildren():
+				os.environ['PROCESS_NAME'] = (constants.STATSDIR + '/' + run_stats_dir_name[0:len(run_stats_dir_name)-1] + '/' + app.text.split('/')[-1] + '.stat')
+				dmtcp_utils.restart(app.text, '--new-coordinator', None, None)
+				print app.text
 
 if __name__ == '__main__':
-	LOGGER = 'generatestats.log'
+	constants.LOGGER = 'generatestats.log'
 	main()

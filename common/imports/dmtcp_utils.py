@@ -21,6 +21,8 @@ def launch(app_id, plugin, newcoordinator, port, modifyenv, daemon):
 	if (modifyenv != None) and ('--modify-env' == modifyenv):
 		cmd += (' ' + modifyenv)
 
+	cmd += (' --no-gzip')
+
 	cmd += (' ' + utils.getappexeccommandbyid(app_id))
 
 	cmd += (' >> ' + constants.LOGDIR + '/' + constants.LOGGER + ' 2>&1 ')
@@ -53,9 +55,7 @@ def kill(port):
 	import constants
 	import utils
 
-	cmd = constants.DMTCP_COMMAND
-
-	cmd += ' -k'
+	cmd = constants.DMTCP_COMMAND + ' -k'
 
 	if (port != None) and ('--port' in port):
 		cmd += (' ' + port)
@@ -63,4 +63,24 @@ def kill(port):
 	cmd += (' >> ' + constants.LOGDIR + '/' + constants.LOGGER + ' 2>&1 ')
 
 	utils.execcmd(cmd)
-	
+
+def restart(chkpt_img, newcoordinator, port, daemon):
+	import constants
+	import utils
+
+	cmd = constants.DMTCP_RESTART
+
+	if (newcoordinator != None) and ('--new-coordinator' == newcoordinator):
+                cmd += (' ' + newcoordinator)
+
+	if (port != None) and ('--port' in port):
+                cmd += (' ' + port)
+
+	cmd += (' ' + chkpt_img)
+
+	cmd += (' >> ' + constants.LOGDIR + '/' + constants.LOGGER + ' 2>&1 ')
+
+	if (daemon != None) and ('--daemon' == daemon):
+                utils.execcmdbg(cmd)
+        else:
+                utils.execcmd(cmd)
