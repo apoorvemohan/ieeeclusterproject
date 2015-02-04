@@ -8,6 +8,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <sys/types.h>
 #include <unistd.h>
 #include <string.h>
 #include <sys/ioctl.h>
@@ -18,14 +19,14 @@
 
 #include "dmtcp.h"
 
-#define MAX 5
+#define CLOCKID CLOCK_REALTIME
 
 int fd[] = {-1, -1, -1, -1, -1, -1, -1, -1};
 struct perf_event_attr *pe[8];
 int long long count = 0;
 FILE *outfp = NULL;
 char *filename = NULL;
-time_t starttime, endtime;
+//time_t starttime, endtime;
 
 void read_perf_ctr_val(int i, char *name){
 
@@ -34,12 +35,21 @@ void read_perf_ctr_val(int i, char *name){
         read(fd[i], &count, sizeof(long long));
         fprintf(outfp, "%s: %lld\n", name, count);
 	ioctl(fd[i], PERF_EVENT_IOC_DISABLE, 0);
-        close(fd[i]);
+	close(fd[i]);
 }
 
-void alarm_handler(int a){
+void read_ctrs(){
 
-	read_perf_ctr_val(0, "PAGE_FAULTS");
+	FILE *fp = fopen("/proc/self/status", "r");
+	char *line = NULL;
+	size_t a = 0;
+
+	while(getline(&line, &a, fp) != -1){
+		if(strstr(line, "Name") || strstr(line, "VmRSS"))
+			fprintf(outfp, "%s", line);
+	}
+
+        read_perf_ctr_val(0, "PAGE_FAULTS");
         read_perf_ctr_val(1, "CONTEXT_SWITCHES");
         read_perf_ctr_val(2, "CPU_MIGRATIONS");
         read_perf_ctr_val(3, "CPU_CYCLES");
@@ -48,12 +58,10 @@ void alarm_handler(int a){
         read_perf_ctr_val(6, "CACHE_MISSES");
         read_perf_ctr_val(7, "BRANCH_INSTRUCTIONS");
 
-	endtime = time(0);
-
-	fprintf(outfp, "Time Taken: %d Seconds\n", (localtime(&endtime)->tm_sec - localtime(&starttime)->tm_sec));
-
-	fclose(outfp);
-        exit(0);
+	char buff[20];
+	time_t now = time(NULL);
+	strftime(buff, 20, "%Y-%m-%d %H:%M:%S", localtime(&now));
+	fprintf(outfp, "[TIMESTAMP] %s\n\n", buff);
 }
 
 static long perf_event_open1(struct perf_event_attr *hw_event, pid_t pid,
@@ -102,8 +110,16 @@ void invoke_ctr(){
 void setup_perf_ctr()
 {
         invoke_ctr();
-	alarm(MAX);
-	starttime = time(0);
+	alarm(10);
+	//starttime = time(0);
+}
+
+void sigalrm_handler(int a){
+
+        outfp = fopen(filename, "a");
+	read_ctrs();
+	fclose(outfp);
+	setup_perf_ctr();
 }
 
 void dmtcp_event_hook(DmtcpEvent_t event, DmtcpEventData_t *data)
@@ -111,19 +127,40 @@ void dmtcp_event_hook(DmtcpEvent_t event, DmtcpEventData_t *data)
   /* NOTE:  See warning in plugin/README about calls to printf here. */
   switch (event) {
 
-  case DMTCP_EVENT_WRITE_CKPT:
-      break;
+  case DMTCP_EVENT_EXIT: printf("Hello World\n");
+	break;
   case DMTCP_EVENT_RESUME_USER_THREAD:
   {
-
-
       if (data->resumeInfo.isRestart) {
 
-        starttime = endtime = 0;
+//	int dummy = 1;
+//	while(dummy);
+
+	system("date");
+	timer_t timerid;
+        struct sigevent sev;
+        struct itimerspec its;
+        long long freq_nanosecs;
+
+        //starttime = endtime = 0;
         filename = getenv("PROCESS_NAME");
-        outfp = fopen(filename, "a");
-        signal(SIGALRM, alarm_handler);
+ 
+	if(strlen(filename) == 0)
+		filename = "/tmp/dmtcp.stat";
+
+        signal(SIGALRM, sigalrm_handler);
+        timer_create(CLOCK_REALTIME, NULL, &timerid);
+
+//        freq_nanosecs = atoll("10000000000");
+//        its.it_value.tv_sec = freq_nanosecs/1000000000;
+//        its.it_value.tv_nsec = freq_nanosecs%1000000000;
+//        its.it_interval.tv_sec = its.it_value.tv_sec;
+//        its.it_interval.tv_nsec = its.it_value.tv_nsec;
+
+//        timer_settime(timerid, 0, &its, NULL);
+
         setup_perf_ctr();
+
       } else {
         ;
       }

@@ -41,7 +41,7 @@ def main():
 		utils.chdir(chkpt_dir)
 		port = utils.getopenport()
 		dmtcp_utils.launch(app_id, '--with-plugin myplug', '--newcoordinator', '--port ' + str(port), '--modify-env', '--daemon')
-		time.sleep(constants.SHORTDELAY)
+		time.sleep(20)
 		dmtcp_utils.chkpt('--port ' + str(port), '-b')
 		dmtcp_utils.kill('--port ' + str(port))
 		utils.chdir(cwd)
@@ -66,8 +66,7 @@ def main():
 			run_template = "\n\t<RUN ID='" + str(run_id) + "'>" + app + '\n\t</RUN>'
 			run += run_template
 			run_id += 1
-		break
-		#index += 1
+		index += 1
 	
 	root = '<DATA>' + run + '\n</DATA>'
 

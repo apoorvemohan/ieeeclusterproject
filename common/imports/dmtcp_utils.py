@@ -64,11 +64,11 @@ def kill(port):
 
 	utils.execcmd(cmd)
 
-def restart(chkpt_img, newcoordinator, port, daemon):
+def restart(chkpt_img, newcoordinator, port, daemon, envvar):
 	import constants
 	import utils
 
-	cmd = constants.DMTCP_RESTART
+	cmd = 'PROCESS_NAME=' + envvar + ' ' + constants.DMTCP_RESTART
 
 	if (newcoordinator != None) and ('--new-coordinator' == newcoordinator):
                 cmd += (' ' + newcoordinator)
