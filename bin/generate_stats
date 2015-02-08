@@ -25,9 +25,7 @@ def main():
 
 			os.mkdir(constants.STATSDIR + '/' + run_stats_dir_name[0:len(run_stats_dir_name)-1])
 			for app in run.getchildren():
-#				os.environ['PROCESS_NAME'] = (constants.STATSDIR + '/' + run_stats_dir_name[0:len(run_stats_dir_name)-1] + '/' + app.text.split('/')[-1] + '.stat')
-				dmtcp_utils.restart(app.text, '--new-coordinator', None, '--daemon', constants.STATSDIR + '/' + run_stats_dir_name[0:len(run_stats_dir_name)-1] + '/' + app.text.split('/')[-1] + '.stat')
-			#time.sleep(25)
+				dmtcp_utils.restart(app.text, '--new-coordinator', None, None, constants.STATSDIR + '/' + run_stats_dir_name[0:len(run_stats_dir_name)-1] + '/' + app.text.split('/')[-1] + '.stat')
 
 
 if __name__ == '__main__':

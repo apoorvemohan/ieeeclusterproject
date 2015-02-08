@@ -1,0 +1,7 @@
+[2015-02-08 04:13:30 INFO] Executing /home/apoorve/project/splash2_bench/codes/kernels/radix/RADIX -p8 -r16 -n234349835 -m7
+[2015-02-08 04:15:12 INFO] Executing /home/apoorve/project/splash2_bench/codes/kernels/radix/RADIX -p8 -r16 -n234349835 -m7
+[2015-02-08 04:15:39 INFO] Executing /home/apoorve/project/splash2_bench/codes/kernels/lu/non_contiguous_blocks/LUNC -n4096 -p4 -b8
+[2015-02-08 04:17:57 INFO] Executing /home/apoorve/project/splash2_bench/codes/kernels/lu/contiguous_blocks/LUC -n4096 -p8 -b16
+[2015-02-08 04:24:59 INFO] Executing /home/apoorve/project/splash2_bench/codes/kernels/radix/RADIX -p8 -r16 -n234349835 -m7
+[2015-02-08 04:25:25 INFO] Executing /home/apoorve/project/splash2_bench/codes/kernels/lu/non_contiguous_blocks/LUNC -n4096 -p4 -b8
+[2015-02-08 04:27:39 INFO] Executing /home/apoorve/project/splash2_bench/codes/kernels/lu/contiguous_blocks/LUC -n4096 -p8 -b16

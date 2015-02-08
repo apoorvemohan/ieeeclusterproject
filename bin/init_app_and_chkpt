@@ -24,6 +24,8 @@ def setup_for_restart(app_id):
 	utils.mkdir(app_chkpt_dir)
 	fp = open(app_chkpt_dir + '/dmtcp_env.txt', "w")
 	fp.write("PROCESS_NAME=$PROCESS_NAME\n")
+	fp.write("SIG_HANDLER=$SIG_HANDLER\n")
+	fp.write("CHKPT_IMG_DIR=$CHKPT_IMG_DIR\n")
         fp.close()
 	return app_chkpt_dir
 

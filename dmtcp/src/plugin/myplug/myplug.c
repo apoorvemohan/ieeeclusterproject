@@ -26,7 +26,6 @@ struct perf_event_attr *pe[8];
 int long long count = 0;
 FILE *outfp = NULL;
 char *filename = NULL;
-//time_t starttime, endtime;
 
 void read_perf_ctr_val(int i, char *name){
 
@@ -111,7 +110,6 @@ void setup_perf_ctr()
 {
         invoke_ctr();
 	alarm(10);
-	//starttime = time(0);
 }
 
 void sigalrm_handler(int a){
@@ -142,23 +140,12 @@ void dmtcp_event_hook(DmtcpEvent_t event, DmtcpEventData_t *data)
         struct itimerspec its;
         long long freq_nanosecs;
 
-        //starttime = endtime = 0;
         filename = getenv("PROCESS_NAME");
  
 	if(strlen(filename) == 0)
 		filename = "/tmp/dmtcp.stat";
 
         signal(SIGALRM, sigalrm_handler);
-        timer_create(CLOCK_REALTIME, NULL, &timerid);
-
-//        freq_nanosecs = atoll("10000000000");
-//        its.it_value.tv_sec = freq_nanosecs/1000000000;
-//        its.it_value.tv_nsec = freq_nanosecs%1000000000;
-//        its.it_interval.tv_sec = its.it_value.tv_sec;
-//        its.it_interval.tv_nsec = its.it_value.tv_nsec;
-
-//        timer_settime(timerid, 0, &its, NULL);
-
         setup_perf_ctr();
 
       } else {

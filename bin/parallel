@@ -1,0 +1,31 @@
+#!/usr/bin/env python
+
+import os
+import sys
+
+path = os.popen('cd ..;pwd').read().strip()
+sys.path.insert(0, path + '/common/imports')
+
+import utils
+import constants
+
+
+def get_runnable_instance_map():
+	runnable_instance_map = {}
+	for instance in os.listdir(constants.SEQ_APP_INSTANCE_DIR):
+		runnable_instance_map.update(getidcmdpairbyxml(constants.SEQ_APP_INSTANCE_DIR + '/' + instance))
+	return runnable_instance_map
+
+
+def main():
+	runnable = get_runnable_instance_map()
+	for key in runnable.keys():
+		utils.loginfo('Executing ' + runnable[key])
+		utils.execcmd('touch ' + SEQ_DMTCP_STATS_DIR + '/' + str(key) + '_' + utils.gettimestamp() + '.stat')
+		utils.execcmd('echo ' + runnable[key] + ' >> ' + SEQ_DMTCP_STATS_DIR + '/' + str(key) + '_' + utils.gettimestamp() + '.stat')
+		utils.execcmd('perf stat ' + app + ' >> ' + SEQ_DMTCP_STATS_DIR + '/' + str(key) + '_' + utils.gettimestamp() + '.stat')
+
+if __name__ == "__main__":
+	constants.LOGGER = 'parallel.log'
+	main()
+

@@ -1,21 +1,39 @@
 #!/usr/bin/env python
 
-
 BASE = '/home/apoorve/project'
 DMTCP = BASE + '/dmtcp'
-SPLASH = BASE + '/splash2_bench'
-SPLASH_KERNEL = SPLASH + '/codes/kernels'
-SPLASH_APPS = SPLASH = '/codes/apps'
-PROBE = BASE + '/stencilprobe_bench'
 STRACE = BASE + '/strace'
 
 LOGDIR = BASE + '/log'
-DATADIR = BASE + '/common/data'
+DATADIR = BASE + '/data'
 CHKPTDIR = DATADIR + '/init_chkpts'
-STATSDIR = DATADIR + '/stats'
 
-DATAFILE = DATADIR + '/appdata.xml'
-PERMUTATIONFILE = DATADIR + '/permutations.xml'
+SEQ_DIR = DATADIR + '/seq'
+SEQ_STATS_DIR = SEQ_DIR + '/stats'
+SEQ_DATA_DIR = SEQ_DIR + '/appdata'
+SEQ_APP_INSTANCE_DIR = SEQ_DATA_DIR + '/app_instance_xml'
+
+SEQ_DMTCP_DIR = DATADIR + '/seq_dmtcp'
+SEQ_DMTCP_STATS_DIR = SEQ_DMTCP_DIR + '/stats'
+SEQ_DMTCP_CHKPTS_DIR = SEQ_DMTCP_DIR + '/chkpts'
+SEQ_DMTCP_DATA_DIR = SEQ_DMTCP_DIR + '/appdata'
+SEQ_DMTCP_APP_INSTANCE_DIR = SEQ_DMTCP_DATA_DIR + '/app_instance_xml'
+
+PARALLEL_DIR = DATADIR + 'parallel'
+PARALLEL_STATS_DIR = PARALLEL_DIR + '/stats'
+PARALLEL_DATA_DIR = PARALLEL_DIR + '/appdata'
+PARALLEL_APP_INSTANCE_DIR = PARALLEL_DATA_DIR + '/app_instance_xml'
+PARALLEL_GROUPS_DIR = PARALLEL_DATA_DIR + '/groups'
+
+PARALLEL_DMTCP_DIR = DATADIR + 'parallel_dmtcp'
+PARALLEL_DMTCP_STATS_DIR = PARALLEL_DMTCP_DIR + '/stats'
+PARALLEL_DMTCP_DATA_DIR = PARALLEL_DMTCP_DIR + '/appdata'
+PARALLEL_DMTCP_APP_INSTANCE_DIR = PARALLEL_DMTCP_DATA_DIR + '/app_instance_xml'
+PARALLEL_DMTCP_CHKPTS_DIR = PARALLEL_DMTCP_DIR + '/chkpts'
+PARALLEL_DMTCP_COMPLETED_DIR = PARALLEL_DMTCP_DIR + '/completed'
+PARALLEL_DMTCP_QUEUED_DIR = PARALLEL_DMTCP_DIR + '/queued'
+PARALLEL_DMTCP_RUNNING_DIR = PARALLEL_DMTCP_DIR + '/running'
+
 MYPLUG = DMTCP + '/src/plugin/myplug/dmtcp_myplughijack.so'
 
 #DMTCP COMMANDS
@@ -23,10 +41,6 @@ DMTCP_COORDINATOR = DMTCP + '/bin/dmtcp_coordinator'
 DMTCP_LAUNCH = DMTCP + '/bin/dmtcp_launch'
 DMTCP_RESTART = DMTCP + '/bin/dmtcp_restart'
 DMTCP_COMMAND = DMTCP + '/bin/dmtcp_command'
-
-#APPLICATIONS COMMANDS
-
-APP_PATH_MAP = {'RADIX' : SPLASH_KERNEL + '/radix', 'LUC' : SPLASH_KERNEL + '/lu/contiguous_blocks', 'LUNC' : SPLASH_KERNEL + '/lu/non_contiguous_blocks', 'FMM' : SPLASH_APPS + '/fmm/FMM', 'OCEANC' : SPLASH_APPS + '/ocean/contiguous_partitions', 'OCEANNC' : SPLASH_APPS + '/ocean/non_contiguous_partitions', 'WATERNSQUARED' : SPLASH_APPS + '/water-nsquared', 'PROBEBLOCKED' : PROBE, 'PROBEOBLIVIOUS' : PROBE}
 
 #CONSTANTS
 SHORTDELAY = 5

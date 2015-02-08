@@ -1,0 +1,44 @@
+#!/usr/bin/env python
+
+#total memory usage of all processes should be <= total memory of the system
+#return list of processes to be exetuted next
+
+import os
+import time
+import sys
+import itertools as I
+import xml.etree.cElementTree as ET
+import multiprocessing as m
+sys.path.insert(0, '/home/apoorve/project/common/imports')
+
+import dmtcp_utils
+import utils
+import constants
+
+sys_resource_map = {}
+current_resource_usage = {}
+
+def create_sys_resource_map():
+
+	sys_resource_map['RAM'] = int(os.popen("cat /proc/meminfo | grep MemTotal").read().strip().split(':')[-1].strip().split(' ')[0])
+	sys_resource_map['CPU'] = m.cpu_count()
+
+def get_running_stat_map():
+	for app in os.listdir(constants.ACTIVEAPPSDIR):
+		
+
+
+def main():
+	
+
+	create_sys_resource_map()
+
+	while True:
+		get_running_stat_map()
+		get_queued_stat_map()
+		
+		
+		
+
+if __name__ == "__main__":
+	main()

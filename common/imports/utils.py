@@ -35,11 +35,34 @@ def getcwd():
 def getopenport():
         import socket
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.bind(("",0))
+        s.bind(('',0))
         s.listen(1)
         port = s.getsockname()[1]
         s.close()
         return port
+
+def getidcmdpairbyxml(xmlfile):
+	import xml.etree.ElementTree as ET
+	import sys
+	import os
+
+	path = os.path.dirname(os.path.realpath(__file__))  + '/../..'
+	sys.path.insert(0, path)
+
+	import data.app_commands as ac
+
+	tree = ET.parse(xmlfile)
+	root = tree.getroot()
+
+	key = root.get('ID')
+	app = root.get('NAME')
+	cmd = ac.APP_CMD_MAP[app]
+
+	for arg in root.getchildren():
+		cmd = cmd.replace(arg.tag, arg.text)
+
+	return {key:cmd}
+	
 
 def getappidlist():
 	import xml.etree.ElementTree as ET
@@ -79,3 +102,23 @@ def getappexeccommandbyid(app_id):
 		app_cmd = app_cmd.replace(node.tag, node.text)
 
 	return app_cmd
+
+def zipdir(path, zip):
+	import os
+	import zipfile
+
+	for root, dirs, files in os.walk(path):
+		for file in files:
+			zip.write(os.path.join(root, file))
+
+def loginfo(info):
+	import constants
+	execcmd('echo [' + gettimestamp()+' INFO] ' + str(info) + ' >> ' + constants.LOGDIR + '/' + constants.LOGGER)
+
+def logerr(error):
+	import constants
+	execcmd('echo [' + gettimestamp()+' ERROR] ' + str(error) + ' >> ' + constants.LOGDIR + '/' + constants.LOGGER)
+
+def logwarn(warning):
+	import constants
+	execcmd('echo [' + gettimestamp()+' WARNING] ' + str(warning) + ' >> ' + constants.LOGDIR + '/' + constants.LOGGER)

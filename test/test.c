@@ -7,7 +7,11 @@
 
 int main(int argc, char *argv[]){
 
- char procid[5];
+printf("%s\n", getenv("ABC"));
+printf("%s\n", getenv("XYZ"));
+
+
+/* char procid[5];
 //      char cmd1[256], cmd2[256];
         char f[50];
 
