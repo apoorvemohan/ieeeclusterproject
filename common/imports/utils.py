@@ -1,5 +1,15 @@
 #!/usr/bin/env python
 
+def getchkptimg(folder):
+	import os
+	for item in os.listdir(folder):
+		if '.dmtcp' in item:
+			return item
+
+def listonlydir(path):
+	import os
+	return [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
+
 def execcmd(command):
 	import os
 	os.system(command)

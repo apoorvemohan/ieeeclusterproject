@@ -3,80 +3,74 @@
 import os
 import time
 import sys
-import itertools as I
-import xml.etree.cElementTree as ET
-sys.path.insert(0, '/home/apoorve/project/common/imports')
 
-import dmtcp_utils
-import utils
-import constants
+path = os.path.dirname(os.path.realpath(__file__))  + '/..'
+sys.path.insert(0, path)
 
-def get_dir_name_for_app_by_id(app_id):
-	cmd = utils.getappexeccommandbyid(app_id)
-	if cmd.find('|') != -1:
-		cmd = cmd.split('|')[1] + ' ' + cmd.split('|')[0].replace('echo','')
+import common.imports.utils as u
+import common.imports.constants as c
+import common.imports.dmtcp_utils as du
 
-	return constants.CHKPTDIR + '/' + cmd.split(' ', 1)[0].split('/')[-1] + '_' + cmd.split(' ', 1)[1].strip().replace("'","").replace('-','').replace(' ','_')  + '_' + utils.gettimestamp().replace(' ','_')
-
-
-def setup_for_restart(app_id):
-	app_chkpt_dir = get_dir_name_for_app_by_id(app_id)
-	utils.mkdir(app_chkpt_dir)
-	fp = open(app_chkpt_dir + '/dmtcp_env.txt', "w")
-	fp.write("PROCESS_NAME=$PROCESS_NAME\n")
-	fp.write("SIG_HANDLER=$SIG_HANDLER\n")
-	fp.write("CHKPT_IMG_DIR=$CHKPT_IMG_DIR\n")
+def setup_for_restart(chkptdir):
+	fp = open(chkptdir + '/dmtcp_env.txt', 'w')
+	fp.write('STATFILE=$STATFILE\n')
+	fp.write('STATGEN=$STATGEN\n')
+	fp.write('REMOVEFROMQUEUE=$REMOVEFROMQUEUE\n')
         fp.close()
-	return app_chkpt_dir
+
+def get_runnable_instance_map(appinstancedir):
+        runnable_instance_map = {}
+        for instance in os.listdir(appinstancedir):
+                runnable_instance_map.update(u.getidcmdpairbyxml(appinstancedir + '/' + instance))
+        return runnable_instance_map
 
 def main():
 
-	chkpt_dir_list = []
-	utils.mkdir(constants.CHKPTDIR)	
-	app_id_list = utils.getappidlist()
-	
-	for app_id in app_id_list:
+	CHKPTDIR = None
+	APPINSTANCEDIR = None
+
+	if (len(sys.argv) == 1) or (sys.argv[1] == ''):
+		u.logerr('INVALID ARGUMENT SUPPLIED!!!')
+		sys.exit(0)
+
+	if (sys.argv[1] == '-s') or (sys.argv[1] == '--seq'):
+		CHKPTDIR = c.SEQ_DMTCP_CHKPTS_DIR
+		APPINSTANCEDIR = c.SEQ_DMTCP_APP_INSTANCE_DIR
+	elif (sys.argv[1] == '-p') or (sys.argv[1] == '--parallel'):
+                CHKPTDIR = c.PARALLEL_DMTCP_CHKPTS_DIR
+                APPINSTANCEDIR = c.PARALLEL_DMTCP_APP_INSTANCE_DIR
+
+	if os.path.isdir(CHKPTDIR):
+		os.rename(CHKPTDIR, CHKPTDIR + '.' + u.gettimestamp().replace(' ', '_'))
+		u.loginfo('chkpt dir archieved')
+	os.mkdir(CHKPTDIR)
+
+	runnable = get_runnable_instance_map(APPINSTANCEDIR)
+	for key in runnable.keys():
+		os.mkdir(CHKPTDIR + '/' + str(key))
+		u.execcmd('touch ' + CHKPTDIR + '/' + str(key) + '/command')
+		u.execcmd('echo ' + runnable[key] + ' >> ' + CHKPTDIR + '/' + str(key) + '/command')
+		chkptnum = 0
+		if len(u.listonlydir(CHKPTDIR + '/' + str(key))) > 0:
+			chkptnum = int(max(u.listonlydir(CHKPTDIR + '/' + str(key)))) + 1
+		else:
+			chkptnum = 1
+		os.mkdir(CHKPTDIR + '/' + str(key) + '/' + str(chkptnum))
 		port = None
-		cwd = utils.getcwd()
-		chkpt_dir = setup_for_restart(app_id)
-		chkpt_dir_list.append(chkpt_dir)
-		utils.chdir(chkpt_dir)
-		port = utils.getopenport()
-		dmtcp_utils.launch(app_id, '--with-plugin myplug', '--newcoordinator', '--port ' + str(port), '--modify-env', '--daemon')
-		time.sleep(20)
-		dmtcp_utils.chkpt('--port ' + str(port), '-b')
-		dmtcp_utils.kill('--port ' + str(port))
-		utils.chdir(cwd)
-
-	chkpt_list = []
-
-	for chkpt_dir in chkpt_dir_list:
-		for chkpt in os.listdir(chkpt_dir):
-			if '.dmtcp' in chkpt:
-				chkpt_list.append(chkpt_dir + '/' + chkpt)
-
-	run = ''
-	run_id = index = 1
-
-	while index <= len(chkpt_list):
-		for chkpts in I.combinations(chkpt_list, index):
-			app = ''
-			app_id = 1
-			for chkpt in chkpts:
-				app += "\n\t\t<APPLICATION ID='" + str(app_id) + "'>" + chkpt + '</APPLICATION>'
-				app_id += 1
-			run_template = "\n\t<RUN ID='" + str(run_id) + "'>" + app + '\n\t</RUN>'
-			run += run_template
-			run_id += 1
-		index += 1
-	
-	root = '<DATA>' + run + '\n</DATA>'
-
-	fp = open(constants.PERMUTATIONFILE, 'w')
-	fp.write('<?xml version="1.0"?>\n')
-	fp.write(root)
-	fp.close()
+		cwd = u.getcwd()
+		if (sys.argv[1] == '-p') or (sys.argv[1] == '--parallel'):
+			setup_for_restart(CHKPTDIR + '/' + str(key) + '/' + str(chkptnum))
+		u.chdir(CHKPTDIR + '/' + str(key) + '/' + str(chkptnum))
+		port = u.getopenport()
+		if (sys.argv[1] == '-s') or (sys.argv[1] == '--seq'):
+			du.launch(runnable[key], None, '--newcoordinator', '--port ' + str(port), None, '--daemon')
+		elif (sys.argv[1] == '-p') or (sys.argv[1] == '--parallel'):
+			du.launch(runnable[key], '--with-plugin myplug', '--newcoordinator', '--port ' + str(port), '--modify-env', '--daemon')
+		time.sleep(10)
+		du.chkpt('--port ' + str(port), '-b')
+		du.kill('--port ' + str(port))
+		u.chdir(cwd)
 
 if __name__ == '__main__':
-	constants.LOGGER = 'init_app_and_chkpt.log'
+	c.LOGGER = 'init_app_and_chkpt.log'
 	main()

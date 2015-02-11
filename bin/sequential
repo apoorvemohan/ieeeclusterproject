@@ -20,8 +20,8 @@ def get_runnable_instance_map():
 
 def main():
 	if os.path.isdir(c.SEQ_STATS_DIR):
-		u.zipdir(c.SEQ_STATS_DIR, zipfile.ZipFile(c.SEQ_STATS_DIR + '.' + u.gettimestamp().replace(' ', '_') + '.zip' , 'w'))
-		shutil.rmtree(c.SEQ_STATS_DIR)
+		os.rename(c.SEQ_STATS_DIR, c.SEQ_STATS_DIR + '.' + u.gettimestamp().replace(' ', '_'))
+#		shutil.rmtree(c.SEQ_STATS_DIR)
 
 	os.mkdir(c.SEQ_STATS_DIR)
 	runnable = get_runnable_instance_map()

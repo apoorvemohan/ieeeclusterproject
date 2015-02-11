@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 
 
-def launch(app_id, plugin, newcoordinator, port, modifyenv, daemon):
-	import constants
+def launch(app_cmd, plugin, newcoordinator, port, modifyenv, daemon):
 	import utils
+	import constants
 
-	cmd = constants.DMTCP_LAUNCH 
+	envvarmap = {'STATFILE' : '', 'STATGEN' : '', 'REMOVEFROMQUEUE' : ''}
+
+	cmd = 'STATFILE=' + envvarmap['STATFILE'] + ' ' + 'STATGEN=' + envvarmap['STATGEN'] + ' ' + 'REMOVEFROMQUEUE=' + envvarmap['REMOVEFROMQUEUE'] + ' '
+
+	cmd += constants.DMTCP_LAUNCH 
 
 	if (plugin != None) and ('--with-plugin' in plugin):
 		cmd += (' ' + plugin)
@@ -23,7 +27,7 @@ def launch(app_id, plugin, newcoordinator, port, modifyenv, daemon):
 
 	cmd += (' --no-gzip')
 
-	cmd += (' ' + utils.getappexeccommandbyid(app_id))
+	cmd += (' ' + app_cmd)
 
 	cmd += (' >> ' + constants.LOGDIR + '/' + constants.LOGGER + ' 2>&1 ')
 
@@ -34,8 +38,8 @@ def launch(app_id, plugin, newcoordinator, port, modifyenv, daemon):
 		
 	
 def chkpt(port, blocked):
-	import constants
 	import utils
+	import constants
 
 	cmd = constants.DMTCP_COMMAND
 
@@ -52,8 +56,8 @@ def chkpt(port, blocked):
 	utils.execcmd(cmd)
 
 def kill(port):
-	import constants
 	import utils
+	import constants
 
 	cmd = constants.DMTCP_COMMAND + ' -k'
 
@@ -64,11 +68,13 @@ def kill(port):
 
 	utils.execcmd(cmd)
 
-def restart(chkpt_img, newcoordinator, port, daemon, envvar):
-	import constants
+def restart(chkpt_img, newcoordinator, port, daemon, envvarmap):
 	import utils
+	import constants
 
-	cmd = 'PROCESS_NAME=' + envvar + ' ' + constants.DMTCP_RESTART
+	perf_stat = ''
+
+	cmd = constants.DMTCP_RESTART
 
 	if (newcoordinator != None) and ('--new-coordinator' == newcoordinator):
                 cmd += (' ' + newcoordinator)
@@ -78,7 +84,14 @@ def restart(chkpt_img, newcoordinator, port, daemon, envvar):
 
 	cmd += (' ' + chkpt_img)
 
-	cmd += (' >> ' + constants.LOGDIR + '/' + constants.LOGGER + ' 2>&1 ')
+	if (daemon == None) and (envvarmap['STATGEN'] == 'ONCE'):
+		perf_stat = ' perf stat '
+		cmd += (' >> ' + envvarmap['STATFILE'] + ' 2>&1 ')
+	else:
+		cmd += (' >> ' + constants.LOGDIR + '/' + constants.LOGGER + ' 2>&1 ')
+
+
+	cmd = 'STATFILE=' + envvarmap['STATFILE'] + ' ' + 'STATGEN=' + envvarmap['STATGEN'] + ' ' + 'REMOVEFROMQUEUE=' + envvarmap['REMOVEFROMQUEUE'] + ' ' + perf_stat + cmd
 
 	if (daemon != None) and ('--daemon' == daemon):
                 utils.execcmdbg(cmd)

@@ -26,6 +26,8 @@ struct perf_event_attr *pe[8];
 int long long count = 0;
 FILE *outfp = NULL;
 char *filename = NULL;
+char *type = NULL;
+char *remove_from_queue = NULL;
 
 void read_perf_ctr_val(int i, char *name){
 
@@ -95,7 +97,6 @@ void initialize_and_start_perf_attr(int i, __u32 type, __u64 config){
 
 void invoke_ctr(){
 
-
 	initialize_and_start_perf_attr(0, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_PAGE_FAULTS);
 	initialize_and_start_perf_attr(1, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_CONTEXT_SWITCHES);
 	initialize_and_start_perf_attr(2, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_CPU_MIGRATIONS);
@@ -109,7 +110,9 @@ void invoke_ctr(){
 void setup_perf_ctr()
 {
         invoke_ctr();
-	alarm(10);
+	if((type != NULL) && (strlen(type) !=0) && (strcmp(type, "INFINITE") == 0)){
+		alarm(10);
+	}
 }
 
 void sigalrm_handler(int a){
@@ -117,7 +120,11 @@ void sigalrm_handler(int a){
         outfp = fopen(filename, "a");
 	read_ctrs();
 	fclose(outfp);
-	setup_perf_ctr();
+
+	if((type != NULL) && (strlen(type) !=0) && (strcmp(type, "ONCE") == 0))
+		exit(0);
+	else
+		setup_perf_ctr();
 }
 
 void dmtcp_event_hook(DmtcpEvent_t event, DmtcpEventData_t *data)
@@ -125,14 +132,19 @@ void dmtcp_event_hook(DmtcpEvent_t event, DmtcpEventData_t *data)
   /* NOTE:  See warning in plugin/README about calls to printf here. */
   switch (event) {
 
-  case DMTCP_EVENT_EXIT: printf("Hello World\n");
+  case DMTCP_EVENT_EXIT: printf("Hello World!!!\n");break;
+/*  {
+	printf("hello world!!!\n");
+	if((type != NULL) && (strlen(type) !=0) && (strcmp(type, "ONCE") == 0))
+		sigalrm_handler(0);
 	break;
-  case DMTCP_EVENT_RESUME_USER_THREAD:
+  }
+*/  case DMTCP_EVENT_RESUME_USER_THREAD:
   {
       if (data->resumeInfo.isRestart) {
 
-//	int dummy = 1;
-//	while(dummy);
+	//int dummy = 1;
+	//while(dummy);
 
 	system("date");
 	timer_t timerid;
@@ -140,12 +152,17 @@ void dmtcp_event_hook(DmtcpEvent_t event, DmtcpEventData_t *data)
         struct itimerspec its;
         long long freq_nanosecs;
 
-        filename = getenv("PROCESS_NAME");
+        filename = getenv("STATFILE");
+	type = getenv("STATGEN");
  
-	if(strlen(filename) == 0)
+	if((filename != NULL) && strlen(filename) == 0)
 		filename = "/tmp/dmtcp.stat";
 
-        signal(SIGALRM, sigalrm_handler);
+	if((type != NULL) && (strlen(type) !=0) && (strcmp(type, "INFINITE") == 0)){
+        	signal(SIGALRM, sigalrm_handler);
+		remove_from_queue = getenv("REMOVEFROMQUEUE");
+	}
+
         setup_perf_ctr();
 
       } else {

@@ -2,30 +2,53 @@
 
 import os
 import sys
+import zipfile
+import shutil
 
-path = os.popen('cd ..;pwd').read().strip()
-sys.path.insert(0, path + '/common/imports')
+path = os.path.dirname(os.path.realpath(__file__))  + '/..'
+sys.path.insert(0, path)
 
-import utils
-import constants
+import common.imports.utils as u
+import common.imports.constants as c
 
+
+def group_exec_completed(applist, appcmdmap):
+	
+
+def get_group_map(type):
+	if (sys.argv[1] == '-r') or (sys.argv[1] == '--random'):
+		
+	elif (sys.argv[1] == '-d') or (sys.argv[1] == '--defined'):
+	
 
 def get_runnable_instance_map():
 	runnable_instance_map = {}
-	for instance in os.listdir(constants.SEQ_APP_INSTANCE_DIR):
-		runnable_instance_map.update(getidcmdpairbyxml(constants.SEQ_APP_INSTANCE_DIR + '/' + instance))
+	for instance in os.listdir(c.PARALLEL_APP_INSTANCE_DIR):
+		runnable_instance_map.update(u.getidcmdpairbyxml(c.PARALLEL_APP_INSTANCE_DIR + '/' + instance))
 	return runnable_instance_map
 
-
 def main():
+	groupmap = get_group_map(sys.argv[1])
+	if os.path.isdir(c.PARALLEL_STATS_DIR):
+		os.rename(c.PARALLEL_STATS_DIR, c.PARALLEL_STATS_DIR + '.' + u.gettimestamp().replace(' ', '_'))
+
+	os.mkdir(c.PARALLEL_STATS_DIR)
 	runnable = get_runnable_instance_map()
-	for key in runnable.keys():
-		utils.loginfo('Executing ' + runnable[key])
-		utils.execcmd('touch ' + SEQ_DMTCP_STATS_DIR + '/' + str(key) + '_' + utils.gettimestamp() + '.stat')
-		utils.execcmd('echo ' + runnable[key] + ' >> ' + SEQ_DMTCP_STATS_DIR + '/' + str(key) + '_' + utils.gettimestamp() + '.stat')
-		utils.execcmd('perf stat ' + app + ' >> ' + SEQ_DMTCP_STATS_DIR + '/' + str(key) + '_' + utils.gettimestamp() + '.stat')
+	for groupid in groupmap.keys():
+		time = u.gettimestamp().replace(' ', '_')
+		u.loginfo('Executing group ' + groupid)
+		os.mkdir(c.PARALLEL_STATS_DIR + '/' + groupid)
+		for appid in groupmap[groupid]:
+			u.loginfo('Executing app ' + runnable[appid])
+			u.execcmd('touch ' + c.PARALLEL_STATS_DIR + '/' + groupid + '/' + str(appid) + '_' + time + '.stat')
+			u.execcmd('echo ' + runnable[appid] + ' >> ' + c.PARALLEL_STATS_DIR + '/' + groupid + '/' + str(appid) + '_' + time + '.stat')
+			u.execcmdbg('perf stat ' + runnable[appid] + ' >> ' + c.PARALLEL_STATS_DIR + '/' + groupid + '/' + str(appid) + '_' + time + '.stat 2>&1 ')
+		while True:
+			if group_exec_completed(groupmap[groupid], runnable):
+				break
+			else:
+				time.sleep(10)
 
 if __name__ == "__main__":
-	constants.LOGGER = 'parallel.log'
+	c.LOGGER = 'parallel.log'
 	main()
-
