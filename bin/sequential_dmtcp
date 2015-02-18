@@ -27,16 +27,14 @@ def get_runnable_instance_map():
 def main():
 	if os.path.isdir(c.SEQ_DMTCP_STATS_DIR):
 		os.rename(c.SEQ_DMTCP_STATS_DIR, c.SEQ_DMTCP_STATS_DIR + '.' + u.gettimestamp().replace(' ', '_') )
-#		shutil.rmtree(c.SEQ_DMTCP_STATS_DIR)
 
 	os.mkdir(c.SEQ_DMTCP_STATS_DIR)
-
 	runnable = get_runnable_instance_map()
 
 	for key in runnable.keys():
 		time = u.gettimestamp().replace(' ', '_')
 		u.loginfo('Executing ' + runnable[key])
-		du.restart(runnable[key], '--new-coordinator', None, None, {'STATFILE': c.SEQ_DMTCP_STATS_DIR + '/' + key + '_' + time + '.stat', 'STATGEN' : 'ONCE', 'REMOVEFROMQUEUE' : ''})
+		du.restart(runnable[key], '--new-coordinator', None, None, {'STATFILE': c.SEQ_DMTCP_STATS_DIR + '/' + key + '_' + time + '.stat', 'STATGEN' : '', 'TIME' : ''})
 
 if __name__ == "__main__":
 	c.LOGGER = 'sequential_dmtcp.log'

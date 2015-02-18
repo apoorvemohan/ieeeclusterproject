@@ -7,8 +7,14 @@
 
 int main(int argc, char *argv[]){
 
-printf("%s\n", getenv("ABC"));
-printf("%s\n", getenv("XYZ"));
+int i = 0;
+while(1){
+printf("%d\n", i++);
+sleep(2);
+}
+
+//printf("%s\n", getenv("ABC"));
+//printf("%s\n", getenv("XYZ"));
 
 
 /* char procid[5];

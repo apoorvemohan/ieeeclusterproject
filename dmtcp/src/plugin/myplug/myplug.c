@@ -27,7 +27,7 @@ int long long count = 0;
 FILE *outfp = NULL;
 char *filename = NULL;
 char *type = NULL;
-char *remove_from_queue = NULL;
+char *exit_after = NULL;
 
 void read_perf_ctr_val(int i, char *name){
 
@@ -109,10 +109,14 @@ void invoke_ctr(){
 
 void setup_perf_ctr()
 {
+	int time = 10;
         invoke_ctr();
-	if((type != NULL) && (strlen(type) !=0) && (strcmp(type, "INFINITE") == 0)){
-		alarm(10);
+	if((type != NULL) && (strlen(type) !=0) && (strcmp(type, "ONCE") == 0)){
+		char *endptr; 
+		time = (int) strtol(exit_after, &endptr, 10);
 	}
+
+	alarm(time);
 }
 
 void sigalrm_handler(int a){
@@ -123,7 +127,7 @@ void sigalrm_handler(int a){
 
 	if((type != NULL) && (strlen(type) !=0) && (strcmp(type, "ONCE") == 0))
 		exit(0);
-	else
+	else if((type != NULL) && (strlen(type) !=0) && (strcmp(type, "INFINITE") == 0))
 		setup_perf_ctr();
 }
 
@@ -133,20 +137,17 @@ void dmtcp_event_hook(DmtcpEvent_t event, DmtcpEventData_t *data)
   switch (event) {
 
   case DMTCP_EVENT_EXIT: printf("Hello World!!!\n");break;
-/*  {
-	printf("hello world!!!\n");
-	if((type != NULL) && (strlen(type) !=0) && (strcmp(type, "ONCE") == 0))
-		sigalrm_handler(0);
-	break;
-  }
-*/  case DMTCP_EVENT_RESUME_USER_THREAD:
+
+  case DMTCP_EVENT_RESUME_USER_THREAD:
   {
       if (data->resumeInfo.isRestart) {
 
-	//int dummy = 1;
-	//while(dummy);
+//	int dummy = 1;
+//	while(dummy);
 
 	system("date");
+
+
 	timer_t timerid;
         struct sigevent sev;
         struct itimerspec its;
@@ -155,15 +156,15 @@ void dmtcp_event_hook(DmtcpEvent_t event, DmtcpEventData_t *data)
         filename = getenv("STATFILE");
 	type = getenv("STATGEN");
  
-	if((filename != NULL) && strlen(filename) == 0)
-		filename = "/tmp/dmtcp.stat";
-
-	if((type != NULL) && (strlen(type) !=0) && (strcmp(type, "INFINITE") == 0)){
+	if((type != NULL) && (strlen(type) !=0)){ 
         	signal(SIGALRM, sigalrm_handler);
-		remove_from_queue = getenv("REMOVEFROMQUEUE");
+		if (strcmp(type, "ONCE") == 0){
+			exit_after = getenv("EXITAFTER");
+		}
 	}
 
-        setup_perf_ctr();
+	if((filename != NULL) && strlen(filename) != 0)
+        	setup_perf_ctr();
 
       } else {
         ;

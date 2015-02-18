@@ -11,7 +11,7 @@ import common.imports.constants as c
 
 SPLASH = c.BASE + '/splash2_bench'
 SPLASH_KERNEL = SPLASH + '/codes/kernels'
-SPLASH_APPS = SPLASH = '/codes/apps'
+SPLASH_APPS = SPLASH + '/codes/apps'
 PROBE = c.BASE + '/stencilprobe_bench'
 
 APP_CMD_MAP = {'RADIX' : SPLASH_KERNEL + '/radix/RADIX -pTHREADS -rBASE -nKEYS -mMAXVAL', 
