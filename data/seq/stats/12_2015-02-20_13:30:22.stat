@@ -1,0 +1,1 @@
+/home/apoorve/project/splash2_bench/codes/apps/ocean/non_contiguous_partitions/OCEANNC -n258 -p2 -e1e-07 -r20000 -t4
