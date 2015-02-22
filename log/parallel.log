@@ -1,0 +1,85 @@
+[2015-02-21 23:32:21 INFO] Begin Time: 2015-02-21 23:32:21
+[2015-02-21 23:32:21 INFO] Total Threads Selected: 16
+[2015-02-21 23:32:21 INFO] Runnable: [3, 4]
+[2015-02-21 23:32:21 INFO] Runnablea: [3, 4]
+[2015-02-21 23:32:21 INFO] Executing: perf stat /home/apoorve/project/splash2_bench/codes/apps/ocean/contiguous_partitions/OCEANC -n4098 -p16 -e1e-07 -r20000 -t480
+[2015-02-21 23:32:21 INFO] Runnablea: [3]
+[2015-02-21 23:32:21 INFO] In Group Exec Completed1
+[2015-02-21 23:32:21 INFO] sleeping for jobs to finish
+[2015-02-21 23:33:21 INFO] woken up. checking if jobs are finished
+[2015-02-21 23:33:21 INFO] In Group Exec Completed1
+[2015-02-21 23:33:21 INFO] sleeping for jobs to finish
+[2015-02-21 23:34:21 INFO] woken up. checking if jobs are finished
+[2015-02-21 23:34:21 INFO] In Group Exec Completed1
+[2015-02-21 23:34:21 INFO] sleeping for jobs to finish
+[2015-02-21 23:35:21 INFO] woken up. checking if jobs are finished
+[2015-02-21 23:35:21 INFO] In Group Exec Completed1
+[2015-02-21 23:35:21 INFO] sleeping for jobs to finish
+[2015-02-21 23:36:21 INFO] woken up. checking if jobs are finished
+[2015-02-21 23:36:21 INFO] In Group Exec Completed1
+[2015-02-21 23:36:21 INFO] sleeping for jobs to finish
+[2015-02-21 23:37:22 INFO] woken up. checking if jobs are finished
+[2015-02-21 23:37:22 INFO] In Group Exec Completed1
+[2015-02-21 23:37:22 INFO] sleeping for jobs to finish
+[2015-02-21 23:38:22 INFO] woken up. checking if jobs are finished
+[2015-02-21 23:38:22 INFO] In Group Exec Completed1
+[2015-02-21 23:38:22 INFO] sleeping for jobs to finish
+[2015-02-21 23:39:22 INFO] woken up. checking if jobs are finished
+[2015-02-21 23:39:22 INFO] In Group Exec Completed1
+[2015-02-21 23:39:22 INFO] sleeping for jobs to finish
+[2015-02-21 23:40:22 INFO] woken up. checking if jobs are finished
+[2015-02-21 23:40:22 INFO] In Group Exec Completed1
+[2015-02-21 23:40:22 INFO] sleeping for jobs to finish
+[2015-02-21 23:41:22 INFO] woken up. checking if jobs are finished
+[2015-02-21 23:41:22 INFO] In Group Exec Completed1
+[2015-02-21 23:41:22 INFO] sleeping for jobs to finish
+[2015-02-21 23:42:22 INFO] woken up. checking if jobs are finished
+[2015-02-21 23:42:22 INFO] In Group Exec Completed1
+[2015-02-21 23:42:22 INFO] App Completed whose ID is: 4
+[2015-02-21 23:42:22 INFO] Number of threads Freed: 16
+[2015-02-21 23:42:22 INFO] Searching for new set of applications to execute
+[2015-02-21 23:42:22 INFO] New Application Found
+[2015-02-21 23:42:22 INFO] Executing perf stat /home/apoorve/project/splash2_bench/codes/kernels/lu/non_contiguous_blocks/LUNC -n11000 -p16 -b8
+[2015-02-21 23:42:22 INFO] sleeping for jobs to finish
+[2015-02-21 23:43:22 INFO] woken up. checking if jobs are finished
+[2015-02-21 23:43:22 INFO] In Group Exec Completed1
+[2015-02-21 23:43:22 INFO] sleeping for jobs to finish
+[2015-02-21 23:44:22 INFO] woken up. checking if jobs are finished
+[2015-02-21 23:44:22 INFO] In Group Exec Completed1
+[2015-02-21 23:44:22 INFO] sleeping for jobs to finish
+[2015-02-21 23:45:22 INFO] woken up. checking if jobs are finished
+[2015-02-21 23:45:22 INFO] In Group Exec Completed1
+[2015-02-21 23:45:22 INFO] sleeping for jobs to finish
+[2015-02-21 23:46:22 INFO] woken up. checking if jobs are finished
+[2015-02-21 23:46:22 INFO] In Group Exec Completed1
+[2015-02-21 23:46:22 INFO] sleeping for jobs to finish
+[2015-02-21 23:47:22 INFO] woken up. checking if jobs are finished
+[2015-02-21 23:47:22 INFO] In Group Exec Completed1
+[2015-02-21 23:47:22 INFO] sleeping for jobs to finish
+[2015-02-21 23:48:22 INFO] woken up. checking if jobs are finished
+[2015-02-21 23:48:22 INFO] In Group Exec Completed1
+[2015-02-21 23:48:23 INFO] sleeping for jobs to finish
+[2015-02-21 23:49:23 INFO] woken up. checking if jobs are finished
+[2015-02-21 23:49:23 INFO] In Group Exec Completed1
+[2015-02-21 23:49:23 INFO] sleeping for jobs to finish
+[2015-02-21 23:50:23 INFO] woken up. checking if jobs are finished
+[2015-02-21 23:50:23 INFO] In Group Exec Completed1
+[2015-02-21 23:50:23 INFO] sleeping for jobs to finish
+[2015-02-21 23:51:23 INFO] woken up. checking if jobs are finished
+[2015-02-21 23:51:23 INFO] In Group Exec Completed1
+[2015-02-21 23:51:23 INFO] sleeping for jobs to finish
+[2015-02-21 23:52:23 INFO] woken up. checking if jobs are finished
+[2015-02-21 23:52:23 INFO] In Group Exec Completed1
+[2015-02-21 23:52:23 INFO] sleeping for jobs to finish
+[2015-02-21 23:53:23 INFO] woken up. checking if jobs are finished
+[2015-02-21 23:53:23 INFO] In Group Exec Completed1
+[2015-02-21 23:53:23 INFO] sleeping for jobs to finish
+[2015-02-21 23:54:23 INFO] woken up. checking if jobs are finished
+[2015-02-21 23:54:23 INFO] In Group Exec Completed1
+[2015-02-21 23:54:23 INFO] sleeping for jobs to finish
+[2015-02-21 23:55:23 INFO] woken up. checking if jobs are finished
+[2015-02-21 23:55:23 INFO] In Group Exec Completed1
+[2015-02-21 23:55:23 INFO] App Completed whose ID is: 3
+[2015-02-21 23:55:23 INFO] Number of threads Freed: 16
+[2015-02-21 23:55:23 INFO] Searching for new set of applications to execute
+[2015-02-21 23:55:23 INFO] End Time: 2015-02-21 23:55:23

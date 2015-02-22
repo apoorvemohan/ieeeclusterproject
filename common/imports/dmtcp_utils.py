@@ -5,9 +5,9 @@ def launch(app_cmd, plugin, newcoordinator, port, modifyenv, daemon):
 	import utils
 	import constants
 
-	envvarmap = {'STATFILE' : '', 'STATGEN' : '', 'TIME' : ''}
+	envvarmap = {'STATFILE' : '', 'STATGEN' : ''}
 
-	cmd = 'STATFILE=' + envvarmap['STATFILE'] + ' ' + 'STATGEN=' + envvarmap['STATGEN'] + ' ' + 'TIME=' + envvarmap['TIME'] + ' '
+	cmd = 'STATFILE=' + envvarmap['STATFILE'] + ' ' + 'STATGEN=' + envvarmap['STATGEN'] + ' '
 
 	cmd += constants.DMTCP_LAUNCH 
 
@@ -68,7 +68,7 @@ def kill(port):
 
 	utils.execcmd(cmd)
 
-def restart(chkpt_img, newcoordinator, port, daemon, envvarmap):
+def restart(chkpt_img, newcoordinator, port, daemon, interval, envvarmap):
 	import utils
 	import constants
 	import subprocess as s
@@ -82,6 +82,9 @@ def restart(chkpt_img, newcoordinator, port, daemon, envvarmap):
 
 	if (port != None) and ('--port' in port):
                 cmd += (' ' + port)
+	
+	if (interval != None) and ('-i' in interval):
+		cmd += (' ' + interval)
 
 	cmd += (' ' + chkpt_img)
 
@@ -92,9 +95,9 @@ def restart(chkpt_img, newcoordinator, port, daemon, envvarmap):
 	else:
 		cmd += (' >> ' + constants.LOGDIR + '/' + constants.LOGGER + ' 2>&1 ')
 
-	cmd = 'STATFILE=' + envvarmap['STATFILE'] + ' ' + 'STATGEN=' + envvarmap['STATGEN'] + ' ' + 'TIME=' + envvarmap['TIME'] + ' ' + perf_stat + cmd
+	cmd = 'STATFILE=' + envvarmap['STATFILE'] + ' ' + 'STATGEN=' + envvarmap['STATGEN'] + ' ' + perf_stat + cmd
 
-	
+	utils.loginfo(cmd)	
 	if (daemon != None) and ('--daemon' == daemon):
                 utils.execcmdbg(cmd)
         else:

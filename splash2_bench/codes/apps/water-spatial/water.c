@@ -1,4 +1,4 @@
-#line 228 "/home/apoorve/splash2_benchmark-1.0/codes/null_macros/c.m4.null.POSIX"
+#line 228 "/home/apoorve/project/splash2_bench/codes/null_macros/c.m4.null.POSIX"
 
 #line 1 "water.C"
 /*************************************************************************/
@@ -199,13 +199,13 @@ int main(int argc, char **argv)
          * synchronization variables
          */
 
-        start_end = (first_last_array **)
-            valloc(sizeof(first_last_array *) * NumProcs);;
-//		posix_memalign();
+
+//        start_end = (first_last_array **)valloc(sizeof(first_last_array *) * NumProcs);;
+		posix_memalign(&start_end, sizeof(first_last_array **), sizeof(first_last_array *) * NumProcs);
 
         for (i=0; i < NumProcs; i++) {
-            start_end[i] = (first_last_array *)
-                valloc(sizeof(first_last_array));;
+//            start_end[i] = (first_last_array *)valloc(sizeof(first_last_array));;
+		posix_memalign(&start_end[i], sizeof(first_last_array *), sizeof(first_last_array));
         }
 
         /* Calculate start and finish box numbers for processors */

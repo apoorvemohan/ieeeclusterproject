@@ -34,4 +34,6 @@ def main():
 
 if __name__ == "__main__":
 	c.LOGGER = 'sequential.log'
+	u.loginfo('Begin Time:  ' + u.gettimestamp())
 	main()
+	u.loginfo('End Time:  ' + u.gettimestamp())

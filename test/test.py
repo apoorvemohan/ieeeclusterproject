@@ -11,4 +11,6 @@ func = [test, test1]
 import random
 import sys
 
-random.choice(func)(sys.argv[1])
+b = random.choice(func)
+
+b(1)

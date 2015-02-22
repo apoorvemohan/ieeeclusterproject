@@ -1,4 +1,4 @@
-#line 228 "/home/apoorve/splash2_benchmark-1.0/codes/null_macros/c.m4.null.POSIX"
+#line 228 "/home/apoorve/project/splash2_bench/codes/null_macros/c.m4.null.POSIX"
 
 #line 1 "fileio.H"
 /*************************************************************************/

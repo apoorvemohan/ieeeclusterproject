@@ -28,27 +28,28 @@ FILE *outfp = NULL;
 char *filename = NULL;
 char *type = NULL;
 char *exit_after = NULL;
+int flag = 0;
 
 void read_perf_ctr_val(int i, char *name){
 
-	assert(fd[i] > 0);
-	count = 0;
+        assert(fd[i] > 0);
+        count = 0;
         read(fd[i], &count, sizeof(long long));
         fprintf(outfp, "%s: %lld\n", name, count);
-	ioctl(fd[i], PERF_EVENT_IOC_DISABLE, 0);
-	close(fd[i]);
+        ioctl(fd[i], PERF_EVENT_IOC_DISABLE, 0);
+        close(fd[i]);
 }
 
 void read_ctrs(){
 
-	FILE *fp = fopen("/proc/self/status", "r");
-	char *line = NULL;
-	size_t a = 0;
+        FILE *fp = fopen("/proc/self/status", "r");
+        char *line = NULL;
+        size_t a = 0;
 
-	while(getline(&line, &a, fp) != -1){
-		if(strstr(line, "Name") || strstr(line, "VmRSS"))
-			fprintf(outfp, "%s", line);
-	}
+        while(getline(&line, &a, fp) != -1){
+                if(strstr(line, "Name") || strstr(line, "VmRSS"))
+                        fprintf(outfp, "%s", line);
+        }
 
         read_perf_ctr_val(0, "PAGE_FAULTS");
         read_perf_ctr_val(1, "CONTEXT_SWITCHES");
@@ -59,10 +60,10 @@ void read_ctrs(){
         read_perf_ctr_val(6, "CACHE_MISSES");
         read_perf_ctr_val(7, "BRANCH_INSTRUCTIONS");
 
-	char buff[20];
-	time_t now = time(NULL);
-	strftime(buff, 20, "%Y-%m-%d %H:%M:%S", localtime(&now));
-	fprintf(outfp, "[TIMESTAMP] %s\n\n", buff);
+        char buff[20];
+        time_t now = time(NULL);
+        strftime(buff, 20, "%Y-%m-%d %H:%M:%S", localtime(&now));
+        fprintf(outfp, "[TIMESTAMP] %s\n\n", buff);
 }
 
 static long perf_event_open1(struct perf_event_attr *hw_event, pid_t pid,
@@ -76,8 +77,8 @@ static long perf_event_open1(struct perf_event_attr *hw_event, pid_t pid,
 
 void initialize_and_start_perf_attr(int i, __u32 type, __u64 config){
 
-	pe[i] = (struct perf_event_attr*)malloc(sizeof(struct perf_event_attr));
-	memset(pe[i], 0, sizeof(struct perf_event_attr));
+        pe[i] = (struct perf_event_attr*)malloc(sizeof(struct perf_event_attr));
+        memset(pe[i], 0, sizeof(struct perf_event_attr));
         pe[i]->type = type;
         pe[i]->size = sizeof(struct perf_event_attr);
         pe[i]->config = config;
@@ -85,7 +86,7 @@ void initialize_and_start_perf_attr(int i, __u32 type, __u64 config){
         pe[i]->exclude_kernel = 1;
         pe[i]->exclude_hv = 1;
         fd[i] = perf_event_open1(pe[i], 0, -1, -1, 0);
-	ioctl(fd[i], PERF_EVENT_IOC_RESET, 0);
+        ioctl(fd[i], PERF_EVENT_IOC_RESET, 0);
         ioctl(fd[i], PERF_EVENT_IOC_ENABLE, 0);
 
         if (fd[i] == -1) {
@@ -97,11 +98,11 @@ void initialize_and_start_perf_attr(int i, __u32 type, __u64 config){
 
 void invoke_ctr(){
 
-	initialize_and_start_perf_attr(0, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_PAGE_FAULTS);
-	initialize_and_start_perf_attr(1, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_CONTEXT_SWITCHES);
-	initialize_and_start_perf_attr(2, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_CPU_MIGRATIONS);
-	initialize_and_start_perf_attr(3, PERF_TYPE_HARDWARE, PERF_COUNT_HW_CPU_CYCLES);
-	initialize_and_start_perf_attr(4, PERF_TYPE_HARDWARE, PERF_COUNT_HW_INSTRUCTIONS);
+        initialize_and_start_perf_attr(0, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_PAGE_FAULTS);
+        initialize_and_start_perf_attr(1, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_CONTEXT_SWITCHES);
+        initialize_and_start_perf_attr(2, PERF_TYPE_SOFTWARE, PERF_COUNT_SW_CPU_MIGRATIONS);
+        initialize_and_start_perf_attr(3, PERF_TYPE_HARDWARE, PERF_COUNT_HW_CPU_CYCLES);
+        initialize_and_start_perf_attr(4, PERF_TYPE_HARDWARE, PERF_COUNT_HW_INSTRUCTIONS);
         initialize_and_start_perf_attr(5, PERF_TYPE_HARDWARE, PERF_COUNT_HW_CACHE_REFERENCES);
         initialize_and_start_perf_attr(6, PERF_TYPE_HARDWARE, PERF_COUNT_HW_CACHE_MISSES);
         initialize_and_start_perf_attr(7, PERF_TYPE_HARDWARE, PERF_COUNT_HW_BRANCH_INSTRUCTIONS);
@@ -109,26 +110,33 @@ void invoke_ctr(){
 
 void setup_perf_ctr()
 {
-	int time = 10;
+        int time = 60;
         invoke_ctr();
-	if((type != NULL) && (strlen(type) !=0) && (strcmp(type, "ONCE") == 0)){
-		char *endptr; 
-		time = (int) strtol(exit_after, &endptr, 10);
-	}
-
-	alarm(time);
+//      if((type != NULL) && (strlen(type) !=0) && (strcmp(type, "ONCE") == 0)){
+//              char *endptr;
+//              time = (int) strtol(exit_after, &endptr, 10);
+//      }
+        if((strcmp(type, "ONCE") != 0)){
+		printf("ALARM SET\n");
+                alarm(time);
+        }
 }
 
 void sigalrm_handler(int a){
 
-        outfp = fopen(filename, "a");
-	read_ctrs();
-	fclose(outfp);
+        outfp = fopen(filename, "w");
+        read_ctrs();
+        fclose(outfp);
 
-	if((type != NULL) && (strlen(type) !=0) && (strcmp(type, "ONCE") == 0))
-		exit(0);
-	else if((type != NULL) && (strlen(type) !=0) && (strcmp(type, "INFINITE") == 0))
+        if( (strcmp(type, "ONCE") == 0)){
+
+                exit(0);
+        }
+        else if((type != NULL) && (strlen(type) !=0) && (strcmp(type, "INFINITE") == 0)){
+
 		setup_perf_ctr();
+
+        }
 }
 
 void dmtcp_event_hook(DmtcpEvent_t event, DmtcpEventData_t *data)
@@ -136,38 +144,46 @@ void dmtcp_event_hook(DmtcpEvent_t event, DmtcpEventData_t *data)
   /* NOTE:  See warning in plugin/README about calls to printf here. */
   switch (event) {
 
-  case DMTCP_EVENT_EXIT: printf("Hello World!!!\n");break;
+  case DMTCP_EVENT_RESUME:{
+	
+        if( (strcmp(type, "ONCE") == 0)){
+		printf("In resume\n");
+                system("date");
+                sigalrm_handler(0);
+        }
+  }
+
+  break;
 
   case DMTCP_EVENT_RESUME_USER_THREAD:
   {
       if (data->resumeInfo.isRestart) {
 
-//	int dummy = 1;
-//	while(dummy);
+//      int dummy = 1;
+//      while(dummy);
 
-	system("date");
-
-
-	timer_t timerid;
+        timer_t timerid;
         struct sigevent sev;
         struct itimerspec its;
         long long freq_nanosecs;
 
         filename = getenv("STATFILE");
-	type = getenv("STATGEN");
- 
-	if((type != NULL) && (strlen(type) !=0)){ 
-        	signal(SIGALRM, sigalrm_handler);
-		if (strcmp(type, "ONCE") == 0){
-			exit_after = getenv("EXITAFTER");
-		}
-	}
+        type = getenv("STATGEN");
 
-	if((filename != NULL) && strlen(filename) != 0)
-        	setup_perf_ctr();
+        if((type != NULL) && (strlen(type) !=0)){
+                signal(SIGALRM, sigalrm_handler);
+/*                if (strcmp(type, "ONCE") == 0){
+//                      exit_after = getenv("TIME");
+			printf("FLAG SET\n");
+                        flag = 1;
+                }
+  */      }
+
+        if((filename != NULL) && strlen(filename) != 0)
+                setup_perf_ctr();
 
       } else {
-        ;
+	;
       }
 
       break;
@@ -179,3 +195,4 @@ void dmtcp_event_hook(DmtcpEvent_t event, DmtcpEventData_t *data)
   DMTCP_NEXT_EVENT_HOOK(event, data);
 
 }
+                             

@@ -15,7 +15,6 @@ def setup_for_restart(chkptdir):
 	fp = open(chkptdir + '/dmtcp_env.txt', 'w')
 	fp.write('STATFILE=$STATFILE\n')
 	fp.write('STATGEN=$STATGEN\n')
-	fp.write('REMOVEFROMQUEUE=$REMOVEFROMQUEUE\n')
         fp.close()
 
 def get_runnable_instance_map(appinstancedir):
@@ -47,6 +46,7 @@ def main():
 
 	runnable = get_runnable_instance_map(APPINSTANCEDIR)
 	for key in runnable.keys():
+		u.loginfo('[Starting ' + key + ' : ' + runnable[key] + ']')
 		os.mkdir(CHKPTDIR + '/' + str(key))
 		u.execcmd('touch ' + CHKPTDIR + '/' + str(key) + '/command')
 		u.execcmd('echo ' + runnable[key] + ' >> ' + CHKPTDIR + '/' + str(key) + '/command')
@@ -55,7 +55,9 @@ def main():
 			chkptnum = int(max(u.listonlydir(CHKPTDIR + '/' + str(key)))) + 1
 		else:
 			chkptnum = 1
-		os.mkdir(CHKPTDIR + '/' + str(key) + '/' + str(chkptnum))
+		chkptnum = 1
+		if not os.path.isdir(CHKPTDIR + '/' + str(key) + '/' + str(chkptnum)):
+			os.mkdir(CHKPTDIR + '/' + str(key) + '/' + str(chkptnum))
 		port = None
 		cwd = u.getcwd()
 		if (sys.argv[1] == '-p') or (sys.argv[1] == '--parallel'):
@@ -67,7 +69,7 @@ def main():
 			du.launch(runnable[key], None, '--newcoordinator', '--port ' + str(port), None, '--daemon')
 		elif (sys.argv[1] == '-p') or (sys.argv[1] == '--parallel'):
 			du.launch(runnable[key], '--with-plugin myplug', '--newcoordinator', '--port ' + str(port), '--modify-env', '--daemon')
-		time.sleep(120)
+		time.sleep(60)
 		du.chkpt('--port ' + str(port), '-b')
 		du.kill('--port ' + str(port))
 		u.chdir(cwd)

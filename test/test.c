@@ -7,7 +7,36 @@
 
 int main(int argc, char *argv[]){
 
-int i = 0;
+char *arr[1024];
+
+
+int a = 100;
+
+while(a){
+	
+	arr[a--] = (char*)malloc(1024);
+}
+
+int i=0;
+while(1){
+
+	
+}
+
+/*while(1){
+
+int i=0, j=0, k=0;
+
+for(k=0;k<1024;k++)
+	for(i=0; i<1024; i++)
+		for(j=0;j<1024;j++)
+		{
+			a[k][i][j];	
+		}
+
+}
+
+/*int i = 0;
 while(1){
 printf("%d\n", i++);
 sleep(2);

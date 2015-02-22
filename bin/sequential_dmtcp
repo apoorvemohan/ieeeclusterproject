@@ -34,8 +34,10 @@ def main():
 	for key in runnable.keys():
 		time = u.gettimestamp().replace(' ', '_')
 		u.loginfo('Executing ' + runnable[key])
-		du.restart(runnable[key], '--new-coordinator', None, None, {'STATFILE': c.SEQ_DMTCP_STATS_DIR + '/' + key + '_' + time + '.stat', 'STATGEN' : '', 'TIME' : ''})
+		du.restart(runnable[key], '--new-coordinator', None, None, None, {'STATFILE': c.SEQ_DMTCP_STATS_DIR + '/' + key + '_' + time + '.stat', 'STATGEN' : ''})
 
 if __name__ == "__main__":
 	c.LOGGER = 'sequential_dmtcp.log'
+	u.loginfo('Begin Time:  ' + u.gettimestamp())
 	main()
+	u.loginfo('End Time:  ' + u.gettimestamp())
