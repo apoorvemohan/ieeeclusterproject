@@ -27,9 +27,9 @@ def main():
 	runnable = get_runnable_instance_map()
 	for key in runnable.keys():
 		time = u.gettimestamp().replace(' ', '_')
-		u.loginfo('Executing ' + runnable[key])
+		u.loginfo('Executing ' + str(runnable[key]))
 		u.execcmd('touch ' + c.SEQ_STATS_DIR + '/' + str(key) + '_' + time + '.stat')
-		u.execcmd('echo ' + runnable[key] + ' >> ' + c.SEQ_STATS_DIR + '/' + str(key) + '_' + time + '.stat')
+		u.execcmd('echo \"' + runnable[key] + '\" >> ' + c.SEQ_STATS_DIR + '/' + str(key) + '_' + time + '.stat')
 		u.execcmd('perf stat ' + runnable[key] + ' >> ' + c.SEQ_STATS_DIR + '/' + str(key) + '_' + time + '.stat 2>&1')
 
 if __name__ == "__main__":

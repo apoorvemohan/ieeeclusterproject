@@ -123,12 +123,18 @@ def zipdir(path, zip):
 
 def loginfo(info):
 	import constants
-	execcmd('echo [' + gettimestamp()+' INFO] ' + str(info) + ' >> ' + constants.LOGDIR + '/' + constants.LOGGER)
+	fp = open(constants.LOGDIR + '/' + constants.LOGGER, 'a+')
+	fp.write('[' + gettimestamp()+' INFO] ' + str(info) + '\n')
+	fp.close()
 
-def logerr(error):
+def logerr(info):
 	import constants
-	execcmd('echo [' + gettimestamp()+' ERROR] ' + str(error) + ' >> ' + constants.LOGDIR + '/' + constants.LOGGER)
+	fp = open(constants.LOGDIR + '/' + constants.LOGGER, 'a+')
+	fp.write('[' + gettimestamp()+' ERROR] ' + str(info) + '\n')
+	fp.close()
 
-def logwarn(warning):
+def logwarn(info):
 	import constants
-	execcmd('echo [' + gettimestamp()+' WARNING] ' + str(warning) + ' >> ' + constants.LOGDIR + '/' + constants.LOGGER)
+	fp = open(constants.LOGDIR + '/' + constants.LOGGER, 'a+')
+	fp.write('[' + gettimestamp()+' WARNING] ' + str(info) + '\n')
+	fp.close()
