@@ -1,0 +1,18 @@
+/home/apoorve/project/splash2_bench/codes/apps/ocean/non_contiguous_partitions/OCEANNC: Killed
+
+ Performance counter stats for '/home/apoorve/project/splash2_bench/codes/apps/ocean/non_contiguous_partitions/OCEANNC -n258 -p16 -e1e-07 -r20000 -t8':
+
+    2130737.356379 task-clock                #    9.299 CPUs utilized          
+         4,536,947 context-switches          #    0.002 M/sec                  
+            92,373 cpu-migrations            #    0.043 K/sec                  
+           269,579 page-faults               #    0.127 K/sec                  
+ 2,113,957,636,674 cycles                    #    0.992 GHz                     [50.01%]
+    24,543,751,146 stalled-cycles-frontend   #    1.16% frontend cycles idle    [49.97%]
+ 1,033,308,546,180 stalled-cycles-backend    #   48.88% backend  cycles idle    [49.96%]
+ 2,991,785,668,384 instructions              #    1.42  insns per cycle        
+                                             #    0.35  stalled cycles per insn [49.99%]
+    47,588,258,553 branches                  #   22.334 M/sec                   [50.03%]
+     1,132,338,211 branch-misses             #    2.38% of all branches         [50.04%]
+
+     229.125843979 seconds time elapsed
+

@@ -1,0 +1,40 @@
+
+Ocean simulation with W-cycle multigrid solver
+    Processors                         : 16
+    Grid size                          : 258 x 258
+    Grid resolution (meters)           : 20000.00
+    Time between relaxations (seconds) : 2
+    Error tolerance                    : 1e-07
+
+
+                       PROCESS STATISTICS
+                  Total          Multigrid         Multigrid
+ Proc             Time             Time            Fraction
+    0        1039699918          250065533             0.241
+
+                       TIMING INFORMATION
+Start time                        : 1424770588634298
+Initialization finish time        : 1424770588847162
+Overall finish time               : 1424771628547765
+Total time with initialization    :       1039913467
+Total time without initialization :       1039700603
+    (excludes first timestep)
+
+
+ Performance counter stats for '/home/apoorve/project/splash2_bench/codes/apps/ocean/contiguous_partitions/OCEANC -n258 -p16 -e1e-07 -r20000 -t2':
+
+    8879108.742918 task-clock                #    8.538 CPUs utilized          
+        24,497,342 context-switches          #    0.003 M/sec                  
+           380,805 cpu-migrations            #    0.043 K/sec                  
+           556,403 page-faults               #    0.063 K/sec                  
+ 8,792,673,321,032 cycles                    #    0.990 GHz                     [49.99%]
+   135,572,314,269 stalled-cycles-frontend   #    1.54% frontend cycles idle    [50.01%]
+ 4,787,058,785,294 stalled-cycles-backend    #   54.44% backend  cycles idle    [50.04%]
+10,779,718,892,489 instructions              #    1.23  insns per cycle        
+                                             #    0.44  stalled cycles per insn [50.02%]
+   273,098,283,869 branches                  #   30.757 M/sec                   [49.99%]
+     6,484,887,325 branch-misses             #    2.37% of all branches         [49.96%]
+
+    1039.922247761 seconds time elapsed
+
+/home/apoorve/project/splash2_bench/codes/apps/ocean/contiguous_partitions/OCEANC -n258 -p16 -e1e-07 -r20000 -t2
