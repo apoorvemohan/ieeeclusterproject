@@ -40,7 +40,7 @@ def group_exec_completed1(app_statfile_list, runnable):
 	while len(app_statfile_list) > 0:
 		app = app_statfile_list[i]
 		i += 1
-		if app[0].poll() == 0:
+		if (not os.path.exists('/proc/' + str(app[0].pid))) or (app[0].poll() == 0):
 			i -= 1
 			app[1].close()
 			app_statfile_list.pop(app_statfile_list.index(app))
@@ -64,6 +64,7 @@ def group_exec_completed1(app_statfile_list, runnable):
 					statfile = open(c.PARALLEL_STATS_DIR + '/R/' + str(appid) + '_' + timestamp + '.stat','a')
 					statfile.write(runnable1[appid])
 					u.loginfo('Executing perf stat ' + runnable1[appid])
+					u.loginfo('Executing appid: ' + str(appid))
 					status = subprocess.Popen('perf stat ' + runnable1[appid], shell=True, stdout=statfile, stderr=statfile)
 					app_statfile_list.append([status, statfile, appid, appthreads])
 				runnableb.remove(appid)
@@ -138,6 +139,7 @@ def main():
 				statfile = open(c.PARALLEL_STATS_DIR + '/R/' + str(appid) + '_' + timestamp + '.stat','a')
 				statfile.write(runnable1[appid])
 				u.loginfo('Executing: perf stat ' + runnable1[appid])
+				u.loginfo('Executing appid: ' + str(appid))
 				status = subprocess.Popen('perf stat ' + runnable1[appid], shell=True, stdout=statfile, stderr=statfile)
 				app_statfile_list.append([status, statfile, appid, appthreads])
 			runnablea.remove(appid)
@@ -149,7 +151,7 @@ def main():
 				break
 			else:
 				u.loginfo('sleeping for jobs to finish')
-				time.sleep(60)
+				time.sleep(5)
 				u.loginfo('woken up. checking if jobs are finished')
 
 		if groupthreads != 0:

@@ -63,6 +63,7 @@ def main():
 		if (sys.argv[1] == '-p') or (sys.argv[1] == '--parallel'):
 			setup_for_restart(CHKPTDIR + '/' + str(key) + '/' + str(chkptnum))
 		u.chdir(CHKPTDIR + '/' + str(key) + '/' + str(chkptnum))
+		os.system('cp ' + c.BASE + '/random.in .')
 		port = u.getopenport()
 
 		if (sys.argv[1] == '-s') or (sys.argv[1] == '--seq'):
@@ -71,7 +72,9 @@ def main():
 			du.launch(runnable[key], '--with-plugin myplug', '--newcoordinator', '--port ' + str(port), '--modify-env', '--daemon')
 		time.sleep(60)
 		du.chkpt('--port ' + str(port), '-b')
+		u.loginfo('after checkpoint')
 		du.kill('--port ' + str(port))
+		u.loginfo('after kill')
 		u.chdir(cwd)
 
 if __name__ == '__main__':

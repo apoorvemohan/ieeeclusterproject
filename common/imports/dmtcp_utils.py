@@ -27,12 +27,14 @@ def launch(app_cmd, plugin, newcoordinator, port, modifyenv, daemon):
 
 	cmd += (' --no-gzip')
 
-	if ('FMM' in app_cmd) or ('WATERNSQUARED' in app_cmd):
+	if ('FMM' in app_cmd) or ('WATER-NSQUARED' in app_cmd):
 		cmd = app_cmd.split(';')[0] + ' ; ' + cmd + app_cmd.split(';')[1]
 	else:
 		cmd += (' ' + app_cmd)
 
 	cmd += (' >> ' + constants.LOGDIR + '/' + constants.LOGGER + ' 2>&1 ')
+
+	utils.loginfo('Final launch command: ' + cmd)
 
 	if (daemon != None) and ('--daemon' == daemon):
 		utils.execcmdbg(cmd)
