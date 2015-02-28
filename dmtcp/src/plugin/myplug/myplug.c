@@ -146,7 +146,7 @@ void dmtcp_event_hook(DmtcpEvent_t event, DmtcpEventData_t *data)
 
   case DMTCP_EVENT_RESUME:{
 	
-        if( (strcmp(type, "ONCE") == 0)){
+        if((type != NULL) && (strcmp(type, "ONCE") == 0)){
 		printf("In resume\n");
                 system("date");
                 sigalrm_handler(0);
@@ -170,14 +170,10 @@ void dmtcp_event_hook(DmtcpEvent_t event, DmtcpEventData_t *data)
         filename = getenv("STATFILE");
         type = getenv("STATGEN");
 
-        if((type != NULL) && (strlen(type) !=0)){
+        if((type != NULL) && (strlen(type) !=0))
                 signal(SIGALRM, sigalrm_handler);
-/*                if (strcmp(type, "ONCE") == 0){
-//                      exit_after = getenv("TIME");
-			printf("FLAG SET\n");
-                        flag = 1;
-                }
-  */      }
+                
+        
 
         if((filename != NULL) && strlen(filename) != 0)
                 setup_perf_ctr();

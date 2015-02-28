@@ -7,6 +7,7 @@ import os
 import sys
 import time
 import random
+import signal
 import subprocess as s
 import multiprocessing as m
 import xml.etree.ElementTree as ET
@@ -72,7 +73,7 @@ def generate_stats_and_enqueue():
 
 def clean_completed():
 	for app in running_pid_port:
-			if app[1].poll() == 0:
+			if (app[1].poll() == 0) or (not os.path.exists('/proc/' + str(app[1].pid))):
 				os.rename(c.PARALLEL_DMTCP_RUNNING_DIR + '/' + app[0] + '.stat', c.PARALLEL_DMTCP_COMPLETED_DIR + '/' + app[0] + '.stat' + u.gettimestamp().replace(' ', '_'))
 				running_pid_port.remove(app)
 				app_stats_map.pop(app[0])
