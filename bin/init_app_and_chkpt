@@ -49,7 +49,7 @@ def main():
 		u.loginfo('[Starting ' + key + ' : ' + runnable[key] + ']')
 		os.mkdir(CHKPTDIR + '/' + str(key))
 		u.execcmd('touch ' + CHKPTDIR + '/' + str(key) + '/command')
-		u.execcmd('echo ' + runnable[key] + ' >> ' + CHKPTDIR + '/' + str(key) + '/command')
+		u.execcmd('echo \"' + runnable[key] + '\" >> ' + CHKPTDIR + '/' + str(key) + '/command')
 		chkptnum = 0
 		if len(u.listonlydir(CHKPTDIR + '/' + str(key))) > 0:
 			chkptnum = int(max(u.listonlydir(CHKPTDIR + '/' + str(key)))) + 1
