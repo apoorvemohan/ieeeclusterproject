@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-BASE = '/home/jiajun/apoorve/ieeeclusterproject'
+BASE = ''
 DMTCP = BASE + '/dmtcp'
 STRACE = BASE + '/strace'
 
