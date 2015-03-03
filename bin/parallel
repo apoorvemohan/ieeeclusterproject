@@ -40,7 +40,7 @@ def group_exec_completed1(app_statfile_list, runnable):
 	while len(app_statfile_list) > 0:
 		app = app_statfile_list[i]
 		i += 1
-		if (not os.path.exists('/proc/' + str(app[0].pid))) or (app[0].poll() == 0):
+		if (app[0].poll() == 0) or (not os.path.exists('/proc/' + str(app[0].pid))):
 			i -= 1
 			app[1].close()
 			app_statfile_list.pop(app_statfile_list.index(app))
@@ -95,7 +95,7 @@ def main():
 		os.rename(c.PARALLEL_STATS_DIR, c.PARALLEL_STATS_DIR + '.' + u.gettimestamp().replace(' ', '_'))
 	os.mkdir(c.PARALLEL_STATS_DIR)
 
-	signal.signal(signal.SIGCHLD, signal.SIG_IGN) 
+	#signal.signal(signal.SIGCHLD, signal.SIG_IGN) 
 	runnable1 = get_runnable_instance_map()
 	runnable = runnable1.keys()
 
