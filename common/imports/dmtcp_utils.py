@@ -93,7 +93,7 @@ def restart(chkpt_img, newcoordinator, port, daemon, interval, envvarmap):
 
 	cmd += (' ' + chkpt_img)
 
-	if (daemon == None) and (envvarmap['STATGEN'] == '') and (envvarmap['TIME'] == ''):
+	if (daemon == None) and (envvarmap['STATGEN'] == ''):
 		perf_stat = ' perf stat '
 		cmd += (' >> ' + envvarmap['STATFILE'] + ' 2>&1 ')
 		envvarmap['STATFILE'] = ''
