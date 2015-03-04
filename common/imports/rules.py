@@ -2,7 +2,6 @@
 
 #overcommit threads by 2X - min cache misses
 def rule1(app_stats_map):
-	print 'EXECUTING RULE1'
 	import copy
 	import rules_utils as ru
 	import multiprocessing as m
@@ -29,8 +28,8 @@ def rule1(app_stats_map):
 		tree = ET.parse(c.PARALLEL_DMTCP_APP_INSTANCE_DIR + '/' + app + '.xml')
 		root = tree.getroot()
 		thread = int(root.findall('THREADS')[0].text)
-		ram = int(app_stats_map['VmRSS'].split(' ')[0])
-		if ((totalram - ram) > 0) and ((totalthreads - threads) > 0):
+		ram = int(app_stats_map[app]['VmRSS'].split(' ')[0])
+		if ((totalram - ram) > 0) and ((totalthreads - thread) >= 0):
 			totalram -= ram
 			totalthreads -= thread
 			next_runnable.append(app)
@@ -65,7 +64,6 @@ def rule1(app_stats_map):
 
 #no overcommit - min cache misses
 def rule2(app_stats_map):
-	print 'EXECUTING RULE2'
         import copy
         import rules_utils as ru
         import multiprocessing as m
@@ -92,8 +90,8 @@ def rule2(app_stats_map):
                 tree = ET.parse(c.PARALLEL_DMTCP_APP_INSTANCE_DIR + '/' + app + '.xml')
                 root = tree.getroot()
                 thread = int(root.findall('THREADS')[0].text)
-                ram = int(app_stats_map['VmRSS'].split(' ')[0])
-                if ((totalram - ram) > 0) and ((totalthreads - threads) > 0):
+                ram = int(app_stats_map[app]['VmRSS'].split(' ')[0])
+                if ((totalram - ram) > 0) and ((totalthreads - thread) >= 0):
                         totalram -= ram
                         totalthreads -= thread
                         next_runnable.append(app)

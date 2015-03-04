@@ -72,11 +72,16 @@ def generate_stats_and_enqueue():
 		update_app_stats_map(key, c.PARALLEL_DMTCP_QUEUED_DIR + '/' + key + '.stat')
 
 def clean_completed():
+	global running_pid_port
+	flag = False
 	for app in running_pid_port:
 			if (app[1].poll() == 0) or (not os.path.exists('/proc/' + str(app[1].pid))):
 				os.rename(c.PARALLEL_DMTCP_RUNNING_DIR + '/' + app[0] + '.stat', c.PARALLEL_DMTCP_COMPLETED_DIR + '/' + app[0] + '.stat' + u.gettimestamp().replace(' ', '_'))
 				running_pid_port.remove(app)
 				app_stats_map.pop(app[0])
+				flag = True
+
+	return flag
 
 def get_next_runnable_map():
 
@@ -99,7 +104,7 @@ def stop_running(next_runnable):
 			#du.chkpt('--port ' + str(running[2]), '-b'
 			out = open('/tmp/out', 'w+')
 			err = open('/tmp/err', 'w+')
-			obj = s.Popen(DMTCP_COMMAND + ' -bc --port ' + str(running[2]), shell=True, stdout=out, stderr=err)
+			obj = s.Popen(c.DMTCP_COMMAND + ' -bc --port ' + str(running[2]), shell=True, stdout=out, stderr=err)
 			obj.wait()
 			out.seek(0, 0)
 			err.seek(0, 0)
@@ -113,7 +118,7 @@ def stop_running(next_runnable):
 				#du.kill('--port ' + str(running[2]))
 				out = open('/tmp/out', 'w+')
 				err = open('/tmp/err', 'w+')
-				obj = s.Popen(DMTCP_COMMAND + ' -k --port ' + str(running[2]), shell=True, stdout=out, stderr=err)
+				obj = s.Popen(c.DMTCP_COMMAND + ' -k --port ' + str(running[2]), shell=True, stdout=out, stderr=err)
 				obj.wait()
 				out.seek(0, 0)
 				err.seek(0, 0)
@@ -156,7 +161,8 @@ def start_next(next_runnable):
 		os.chdir(cwd)
 
 def main():
-	signal.signal(signal.SIGCHLD, signal.SIG_IGN)
+	global running_pid_port, app_stats_map
+	#signal.signal(signal.SIGCHLD, signal.SIG_IGN)
 
 	if os.path.isdir(c.PARALLEL_DMTCP_STATS_DIR):
                 os.rename(c.PARALLEL_DMTCP_STATS_DIR, c.PARALLEL_DMTCP_STATS_DIR + '.' + u.gettimestamp().replace(' ', '_'))
@@ -171,14 +177,22 @@ def main():
 	generate_stats_and_enqueue()
 
 	print 'Stats Generated and Tasks Enqueued!!!'
+	
+	timer = 0
 
-	while((len(os.listdir(c.PARALLEL_DMTCP_QUEUED_DIR)) > 0) or (len(c.PARALLEL_DMTCP_RUNNING_DIR) > 0)):
-		clean_completed()
-		next_runnable = get_next_runnable_map()
-		u.loginfo('Next Runnable List: ' + str(next_runnable))
-		stop_running(next_runnable)
-		start_next(next_runnable)
-		time.sleep(60)
+	while((len(os.listdir(c.PARALLEL_DMTCP_QUEUED_DIR)) > 0) or (len(os.listdir(c.PARALLEL_DMTCP_RUNNING_DIR)) > 0)):
+		retval = clean_completed()
+
+		if retval or (timer % 60 == 0):
+			if (timer % 60 == 0):
+				timer = 0
+			next_runnable = get_next_runnable_map()
+			u.loginfo('Next Runnable List: ' + str(next_runnable))
+			stop_running(next_runnable)
+			start_next(next_runnable)
+
+		time.sleep(5)
+		timer += 5
 		
 if __name__ == "__main__":
 	c.LOGGER = 'parallel_dmtcp.log'
