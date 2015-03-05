@@ -40,3 +40,29 @@ def getcpuidleperc():
 		return 0
 	else:
 		return int(cpuutilization * cpus) 
+
+
+def get_app_with_min_memory(app_stats_map):
+	import re
+	
+	minram = 0
+	minramapp = None
+
+	meminfo = open('/proc/meminfo').read()
+	matched = re.search(r'^MemTotal:\s+(\d+)', meminfo)
+	if matched:  
+		minram = int(matched.groups()[0])
+
+	app_stats_map = copy.deepcopy(app_stats_map)
+
+	while app in app_stats_map:
+		if int(app_stats_map[app]['VmRSS'].split(' ')[0]) < minram:
+			minram = int(app_stats_map[app]['VmRSS'].split(' ')[0])
+			minramapp = app
+
+	return minramapp
+			
+
+
+
+~    

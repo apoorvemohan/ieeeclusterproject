@@ -85,14 +85,16 @@ def clean_completed():
 
 def get_next_runnable_map():
 
+	runningapplist = [app[0] for app in running_pid_port]
+
 	for app in os.listdir(c.PARALLEL_DMTCP_RUNNING_DIR):
 		update_app_stats_map(app.split('.')[0], c.PARALLEL_DMTCP_RUNNING_DIR + '/' + app)
 
 	if ((len(sys.argv) == 1) or (sys.argv[1] == None) or (sys.argv[1] == '') or (sys.argv[1] == '-r') or (sys.argv[1] == '--random')):
 		
-		return random.choice(r.RULES.keys())(app_stats_map)
+		return random.choice(r.RULES.keys())(app_stats_map, runningapplist)
 	else:
-		return r.RULES[sys.argv[1]](app_stats_map)
+		return r.RULES[sys.argv[1]](app_stats_map, runningapplist)
 
 #	return [set(next_runnable_list) - set(app[0] for app in running_pid_port)]
 #	retur nexu_runnable_list
