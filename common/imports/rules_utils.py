@@ -10,3 +10,33 @@ def get_app_with_min_cache_misses(app_stats_map):
 
 	return minkey
 
+def get_app_with_min_threads(app_stats_map):
+	import constants as c	
+
+	minthreads = 1000000
+	minthreadapp = None
+
+	for app in app_stats_map:
+		tree = ET.parse(c.PARALLEL_DMTCP_APP_INSTANCE_DIR + '/' + app + '.xml')
+		root = tree.getroot()
+		thread = int(root.findall('THREADS')[0].text)
+		if thread < minthreads:
+			minthreads = thread
+			minthreadapp = app
+
+	return minthreadapp
+
+def getcpuidleperc():
+	import subprocess as s
+	import multiprocessing as m
+
+	obj = s.Popen('top -n3 -d 0.5 | grep Cpu',shell=True, stdout=s.PIPE)
+	obj.wait()
+
+	cpuutilization = float(obj.stdout.readlines()[2].split(' ')[10])
+	cpus = m.cpu_count()
+
+	if int(cpuutilization * float(cpus)) < 90:
+		return 0
+	else:
+		return int(cpuutilization * cpus) 

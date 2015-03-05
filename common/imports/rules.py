@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #overcommit threads by 2X - min cache misses
-def rule1(app_stats_map):
+def rule1(app_stats_map, runninglist=None):
 	import copy
 	import rules_utils as ru
 	import multiprocessing as m
@@ -63,7 +63,7 @@ def rule1(app_stats_map):
 
 
 #no overcommit - min cache misses
-def rule2(app_stats_map):
+def rule2(app_stats_map, runninglist=None):
         import copy
         import rules_utils as ru
         import multiprocessing as m
@@ -100,7 +100,7 @@ def rule2(app_stats_map):
 
         return next_runnable
 
-
+'''
 #total app mem < total sys mem
 def rule3(app_stats_map):
 	print 'rule 3'
@@ -112,5 +112,100 @@ def rule4(app_stats_map):
 #total app mem < tota; sys mem and overcommit threads by 2X
 def rule5(app_stats_map):
 	print 'rule5'
+'''
 
-RULES = {'rule1' : rule1, 'rule2' : rule2}
+#2x overcommit + memory + minthreads firsts
+def rule3(app_stats_map, runninglist=None):
+	import copy
+	import rules_utils as ru
+	import multiprocessing as m
+	import xml.etree.ElementTree as ET
+	import re
+
+	import constants as c
+
+	totalram = 0
+
+	meminfo = open('/proc/meminfo').read()
+	matched = re.search(r'^MemTotal:\s+(\d+)', meminfo)
+	if matched: 
+		totalram = int(matched.groups()[0])
+
+	app_stats_map = copy.deepcopy(app_stats_map)
+	next_runnable = []
+	totalthreads = m.cpu_count() * 2
+	toberemoved = None
+
+	while len(app_stats_map) > 0:
+		app = ru.get_app_with_min_threads(app_stats_map)
+		tree = ET.parse(c.PARALLEL_DMTCP_APP_INSTANCE_DIR + '/' + app + '.xml')
+		root = tree.getroot()
+		thread = int(root.findall('THREADS')[0].text)
+		ram = int(app_stats_map[app]['VmRSS'].split(' ')[0])
+		if ((totalram - ram) > 0) and ((totalthreads - thread) >= 0):
+			totalram -= ram
+			totalthreads -= thread
+			next_runnable.append(app)
+		app_stats_map.pop(app)
+
+	return next_runnable
+
+def rule4(app_stats_map, runninglist):
+
+	import copy
+	import rules_utils as ru
+	import multiprocessing as m
+	import xml.etree.ElementTree as ET
+	import re
+	import constants as c
+	import math
+
+	totalram = 0
+	meminfo = open('/proc/meminfo').read()
+	matched = re.search(r'^MemTotal:\s+(\d+)', meminfo)
+	if matched: 
+		totalram = int(matched.groups()[0])
+
+	totalthreads = math.ceil(ru.getcpuidleperc()/100)
+	app_stats_map = copy.deepcopy(app_stats_map)
+	next_runnable = []
+	toberemoved = None
+
+	if totalthreads > 0:
+		while len(app_stats_map) > 0:
+			app = ru.get_app_with_min_threads(app_stats_map)
+			if not app in runninglist:
+				tree = ET.parse(c.PARALLEL_DMTCP_APP_INSTANCE_DIR + '/' + app + '.xml')
+				root = tree.getroot()
+				thread = int(root.findall('THREADS')[0].text)
+				ram = int(app_stats_map[app]['VmRSS'].split(' ')[0])
+				if ((totalram - ram) > 0) and ((totalthreads - thread) >= 0):
+					totalram -= ram
+					totalthreads -= thread
+					next_runnable.append(app)
+				app_stats_map.pop(app)
+
+	return next_runnable
+
+'''#cpuutilization
+def rule4(app_stats_map, runninglist):
+
+	totalthreads = ru.getcpuidleperc()/100
+	app_stats_map = copy.deepcopy(app_stats_map)
+
+	if totalthreads > 0:
+		while len(app_stats_map) > 0:
+			app = ru.get_app_with_min_threads(app_stats_map)
+			tree = ET.parse(c.PARALLEL_DMTCP_APP_INSTANCE_DIR + '/' + app + '.xml')
+			root = tree.getroot()
+			thread = int(root.findall('THREADS')[0].text)
+			ram = int(app_stats_map[app]['VmRSS'].split(' ')[0])
+			if ((totalram - ram) > 0) and ((totalthreads - thread) >= 0):
+				totalram -= ram
+				totalthreads -= thread
+				next_runnable.append(app)
+			app_stats_map.pop(app)
+
+		return next_runnable
+'''
+RULES = {'rule1' : rule1, 'rule2' : rule2, 'rule3' : rule3, 'rule4' : rule4}
