@@ -7,6 +7,6 @@
         <NRST>0</NRST>
         <NPRINT>25000</NPRINT>
         <NFMC>0</NFMC>
-        <THREADS>16</THREADS>
+        <THREADS>2</THREADS>
         <CUTOFF>6.212752</CUTOFF>
 </APPDATA>
