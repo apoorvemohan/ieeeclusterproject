@@ -124,14 +124,14 @@ def main():
 						app[1].close()
 						flag = True
 					
-				if flag:
-					for app in toberemoved:
-						app_statfile_list.pop(app)
-					break
-				else:
-					u.loginfo('sleeping for jobs to finish')
-					time.sleep(5)
-					u.loginfo('woken up. checking if jobs are finished')
+					if flag:
+						for app in toberemoved:
+							app_statfile_list.pop(app)
+						break
+					else:
+						u.loginfo('sleeping for jobs to finish')
+						time.sleep(5)
+						u.loginfo('woken up. checking if jobs are finished')
 
 		if groupthreads != 0:
 			u.logwarn("Group Threads Not ZERO at end: " + str(groupthreads))
