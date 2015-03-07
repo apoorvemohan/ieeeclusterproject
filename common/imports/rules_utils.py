@@ -12,6 +12,7 @@ def get_app_with_min_cache_misses(app_stats_map):
 
 def get_app_with_min_threads(app_stats_map):
 	import constants as c	
+	import xml.etree.ElementTree as ET
 
 	minthreads = 1000000
 	minthreadapp = None
