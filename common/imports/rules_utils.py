@@ -60,9 +60,4 @@ def get_app_with_min_memory(app_stats_map):
 			minram = int(app_stats_map[app]['VmRSS'].split(' ')[0])
 			minramapp = app
 
-	return minramapp
-			
-
-
-
-~    
+	return minramapp 
