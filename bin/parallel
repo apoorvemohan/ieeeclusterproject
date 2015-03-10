@@ -114,9 +114,12 @@ def main():
 				flag = False
 				toberemoved = []
 
+				
+				u.loginfo('APP STATFILE LIST: ' + str(app_statfile_list))
+
 				for app in app_statfile_list:
 					if app[0].poll() == 0:
-						toberemoved.append(app_statfile_list.index(app))
+						toberemoved.append(app)
 						u.loginfo('App id completed: ' + str(app[2]))
 						runnable_map.pop(app[2])
 						groupthreads -= app[3]
@@ -125,9 +128,12 @@ def main():
 						flag = True
 
 				if flag:
+					u.loginfo('Before Removing')
+					u.loginfo('APP STATFILE LIST: ' + str(app_statfile_list))
 					for app in toberemoved:
-						app_statfile_list.pop(app)
+						app_statfile_list.remove(app)
 						u.loginfo('Removing app from app id list: ' + str(app))
+						
 					break
 					
 				else:
