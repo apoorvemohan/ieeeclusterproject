@@ -48,7 +48,7 @@ def update_app_stats_map(appid, statfile):
 	for stat in stats[0:-2]:
 		app_stats_map[appid][stat.split(':')[0].strip()] = stat.split(':')[1].strip()
 
-	u.loginfo('Latest App Stats Map: ' + str(app_stats_map))
+	#u.loginfo('Latest App Stats Map: ' + str(app_stats_map))
 	fp.close()
 
 def generate_stats_and_enqueue():
@@ -163,6 +163,7 @@ def start_next(next_runnable):
 		os.chdir(cwd)
 
 def main():
+	import time
 	global running_pid_port, app_stats_map
 	#signal.signal(signal.SIGCHLD, signal.SIG_IGN)
 
@@ -184,14 +185,19 @@ def main():
 
 	while((len(os.listdir(c.PARALLEL_DMTCP_QUEUED_DIR)) > 0) or (len(os.listdir(c.PARALLEL_DMTCP_RUNNING_DIR)) > 0)):
 		retval = clean_completed()
+		print 'after clean'
 
 		if retval or (timer % 60 == 0):
 			if (timer % 60 == 0):
 				timer = 0
 			next_runnable = get_next_runnable_map()
+			print 'after_next_runnable'
 			u.loginfo('Next Runnable List: ' + str(next_runnable))
 			stop_running(next_runnable)
+			print 'after stop running'
 			start_next(next_runnable)
+			print 'after next runnable'
+			print time.time()
 
 		time.sleep(5)
 		timer += 5

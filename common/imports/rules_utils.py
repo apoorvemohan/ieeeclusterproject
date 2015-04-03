@@ -27,21 +27,41 @@ def get_app_with_min_threads(app_stats_map):
 
 	return minthreadapp
 
+def get_app_with_max_threads(app_stats_map):
+	import constants as c	
+	import xml.etree.ElementTree as ET
+
+	maxthreads = -1
+	maxthreadapp = None
+
+	for app in app_stats_map:
+		tree = ET.parse(c.PARALLEL_DMTCP_APP_INSTANCE_DIR + '/' + app + '.xml')
+		root = tree.getroot()
+		thread = int(root.findall('THREADS')[0].text)
+		if thread > maxthreads:
+			maxthreads = thread
+			maxthreadapp = app
+
+	return maxthreadapp
+
 def getcpuidleperc():
 	import subprocess as s
 	import multiprocessing as m
 
 	obj = s.Popen('top -n3 -d 0.5 | grep Cpu',shell=True, stdout=s.PIPE)
 	obj.wait()
+	string = obj.stdout.readlines()
+	cpu = string[2].strip().split(',')[3].strip().split(' ')[1].strip()
+	if(cpu == ''):
+		cpu = string[2].strip().split(',')[3].strip().split(' ')[2].strip()
 
-	cpuutilization = float(obj.stdout.readlines()[2].split(' ')[10])
+	cpuutilization = float(cpu)
 	cpus = m.cpu_count()
 
-	if int(cpuutilization * float(cpus)) < 90:
+	if int(cpuutilization) < 7:
 		return 0
 	else:
-		return int(cpuutilization * cpus) 
-
+		return int(round(cpuutilization, 0) * cpus) 
 
 def get_app_with_min_memory(app_stats_map):
 	import re
@@ -62,3 +82,7 @@ def get_app_with_min_memory(app_stats_map):
 			minramapp = app
 
 	return minramapp 
+
+
+
+
